@@ -1,0 +1,672 @@
+USE citas;
+
+-- ============================================================
+-- 1. ESPECIALIDADES
+-- ============================================================
+
+-- La especialidad General creada por el seed se reutiliza como Manicure.
+UPDATE especialidades
+SET nombre = 'Manicure',
+    descripcion = 'Servicios de cuidado, limpieza y embellecimiento de las uñas de las manos.',
+    activo = 1
+WHERE id = 1;
+
+INSERT INTO especialidades (nombre, descripcion, activo)
+VALUES
+('Pedicure', 'Servicios de cuidado, limpieza y arreglo de las uñas de los pies.', 1),
+('Esmaltado', 'Aplicación de esmaltes regulares o semipermanentes para decorar y proteger las uñas.', 1),
+('Adicionales', 'Servicios complementarios para personalizar y mejorar la experiencia del cliente.', 1);
+
+SELECT id, nombre, descripcion, activo
+FROM especialidades
+ORDER BY id;
+
+
+-- ============================================================
+-- 2. SERVICIOS
+-- ============================================================
+
+INSERT INTO servicios
+(nombre, descripcion, precioBase, duracionMinutos, imagen, activo, especialidadId, creadoEn, actualizadoEn)
+VALUES
+('Esmaltado Regular', 'Perfecto para cuando tienes prisa pero quieres que tus uñas estén arregladas.', 7500.00, 60, 'esmaltado-regular.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Esmaltado'), NOW(), NOW()),
+('Esmaltado Semi Permanente', 'Disfruta de un acabado elegante y duradero.', 12000.00, 75, 'esmaltado-semi.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Esmaltado'), NOW(), NOW()),
+('Esmaltado Acrilico', 'Disfruta de un acabado elegante y duradero, eligiendo el largo y forma deseada.', 14000.00, 45, 'esmaltado-acrilico.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Esmaltado'), NOW(), NOW()),
+('Manicure Normal', 'Deja tus uñas y manos en perfecto estado para un acabado más elegante. Incluye esmaltado regular.', 12500.00, 60, 'manicure-normal.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Manicure'), NOW(), NOW()),
+('Manicure SPA', 'Relájate con un masaje y una exfoliación, dejando tus uñas en perfecto estado. Incluye esmaltado semipermanente.', 13500.00, 30, 'manicure-spa.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Manicure'), NOW(), NOW()),
+('Pedicure Normal', 'Deja tus pies arreglados con un acabado distinto.', 12500.00, 30, 'pedicure-normal.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Pedicure'), NOW(), NOW()),
+('Pedicure SPA', 'Relájate con un masaje y tina caliente para que tus pies queden con un acabado perfecto. Incluye esmaltado semi permanente.', 13500.00, 30, 'pedicure-spa.jpg', 1, (SELECT id FROM especialidades WHERE nombre = 'Pedicure'), NOW(), NOW());
+
+SELECT id, nombre, precioBase, duracionMinutos, especialidadId, creadoEn, actualizadoEn
+FROM servicios
+ORDER BY id;
+
+
+-- ============================================================
+-- 3. SERVICIOS ADICIONALES
+-- ============================================================
+
+INSERT INTO servicios_adicionales
+(nombre, descripcion, precio, activo, creadoEn, actualizadoEn)
+VALUES
+('Esmaltado con Calcio', 'Una capa extra de fortaleza con calcio para la salud de tus uñas.', 13500.00, 1, NOW(), NOW()),
+('Corte de Uñas', 'Dejamos tus uñas en la forma y largo deseado.', 500.00, 1, NOW(), NOW()),
+('Remover producto', 'Adicional por remover procedimientos realizados en otros salones distintos a Rose Glow.', 700.00, 1, NOW(), NOW()),
+('Diseño elaborado', 'Diseños 3D, a mano alzada o con cristales.', 3000.00, 1, NOW(), NOW()),
+('Bisutería', 'Elige accesorios para complementar tu mejor outfit.', 1500.00, 1, NOW(), NOW()),
+('Diseño de cejas', 'Diseño y definición de cejas.', 5000.00, 1, NOW(), NOW()),
+('Lifting de pestañas', 'Tratamiento para levantar y definir las pestañas.', 10000.00, 1, NOW(), NOW()),
+('Pestañas postizas', 'Aplicación de pestañas postizas para complementar tu look.', 8000.00, 1, NOW(), NOW());
+
+SELECT id, nombre, precio, activo, creadoEn, actualizadoEn
+FROM servicios_adicionales
+ORDER BY id;
+
+
+-- ============================================================
+-- 4. USUARIOS EMPLEADOS
+-- ============================================================
+
+INSERT INTO usuarios
+(nombre, primerApellido, segundoApellido, correo, telefono, passwordHash, activo, rolId, creadoEn, actualizadoEn)
+VALUES
+('Jimena', 'Saborio', 'Castro', 'jimena@gmail.com', '88880001', '$2b$10$QM9OJw6KR6iShJzKCtLFrO3Y8Yi72Kj69IQmwiDUGTHv8PpY7B.D.', 1, (SELECT id FROM roles WHERE nombre = 'Empleado'), NOW(), NOW()),
+('Valeria', 'Moya', 'Morales', 'valeria@gmail.com', '88880002', '$2b$10$hxIgwInSl00hrkmhuP4QjefcyhKZpxKh9woUsiqLfRveIIiRH/Vf6', 1, (SELECT id FROM roles WHERE nombre = 'Empleado'), NOW(), NOW()),
+('Fiorela', 'Gomez', 'Chaves', 'fiorela@gmail.com', '88880003', '$2b$10$aCJQIb32VkN.tt6ObXcyk.exhYOO5aZvo6xlIr6bvb9QuLUcEjSPW', 1, (SELECT id FROM roles WHERE nombre = 'Empleado'), NOW(), NOW());
+
+SELECT id, nombre, primerApellido, segundoApellido, correo, rolId, creadoEn, actualizadoEn
+FROM usuarios
+WHERE correo IN ('jimena@gmail.com', 'valeria@gmail.com', 'fiorela@gmail.com')
+ORDER BY id;
+
+
+-- ============================================================
+-- 5. EMPLEADOS
+-- ============================================================
+
+INSERT INTO empleados
+(usuarioId, especialidadId, codigoEmpleado, descripcion, activo, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM usuarios WHERE correo = 'jimena@gmail.com'),
+    (SELECT id FROM especialidades WHERE nombre = 'Manicure'),
+    'EMP-001',
+    'Especialista en manicure.',
+    1,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'valeria@gmail.com'),
+    (SELECT id FROM especialidades WHERE nombre = 'Esmaltado'),
+    'EMP-002',
+    'Especialista en esmaltado.',
+    1,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'fiorela@gmail.com'),
+    (SELECT id FROM especialidades WHERE nombre = 'Pedicure'),
+    'EMP-003',
+    'Especialista en pedicure.',
+    1,
+    NOW(),
+    NOW()
+);
+
+SELECT id, usuarioId, especialidadId, codigoEmpleado, descripcion, activo
+FROM empleados
+ORDER BY id;
+
+
+-- ============================================================
+-- 6. EMPLEADOS Y SUS SERVICIOS
+-- ============================================================
+
+INSERT INTO _empleadoServicios (A, B)
+VALUES
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure Normal')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure SPA')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Semi Permanente')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Acrilico')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure Normal')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure SPA')
+),
+(
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular')
+);
+
+SELECT e.codigoEmpleado, u.nombre AS empleado, s.nombre AS servicio
+FROM _empleadoServicios es
+JOIN empleados e ON es.A = e.id
+JOIN usuarios u ON e.usuarioId = u.id
+JOIN servicios s ON es.B = s.id
+ORDER BY e.id, s.id;
+
+
+-- ============================================================
+-- 7. HORARIOS DE ATENCION
+-- ============================================================
+
+INSERT INTO horarios_atencion
+(diaSemanaId, horaInicio, horaFin, activo)
+VALUES
+((SELECT id FROM dias_semana WHERE nombre = 'Lunes'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Martes'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Miércoles'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Jueves'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Viernes'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Sábado'), '09:00:00', '18:00:00', 1),
+((SELECT id FROM dias_semana WHERE nombre = 'Domingo'), '09:00:00', '18:00:00', 0);
+
+SELECT h.id, d.nombre AS dia, h.horaInicio, h.horaFin, h.activo
+FROM horarios_atencion h
+JOIN dias_semana d ON h.diaSemanaId = d.id
+ORDER BY d.numeroOrden;
+
+
+-- ============================================================
+-- 8. RESTRICCIONES DE HORARIO
+-- ============================================================
+
+-- 2 restricciones generales del establecimiento
+-- 1 día completo + 1 parcial por horas
+
+INSERT INTO restricciones_horario
+(tipoRestriccionId, empleadoId, fecha, horaInicio, horaFin, todoElDia, motivo, activo, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'General del establecimiento'),
+    NULL,
+    '2026-09-15',
+    NULL,
+    NULL,
+    1,
+    'Feriado nacional',
+    1,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'General del establecimiento'),
+    NULL,
+    '2026-12-24',
+    '12:00:00',
+    '17:00:00',
+    0,
+    'Cierre especial',
+    1,
+    NOW(),
+    NOW()
+);
+
+-- 3 restricciones específicas de empleado
+
+INSERT INTO restricciones_horario
+(tipoRestriccionId, empleadoId, fecha, horaInicio, horaFin, todoElDia, motivo, activo, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'Específica de empleado'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    '2026-09-18',
+    '09:00:00',
+    '11:00:00',
+    0,
+    'Capacitación',
+    1,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'Específica de empleado'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    '2026-09-19',
+    '13:00:00',
+    '15:00:00',
+    0,
+    'Cita médica',
+    1,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'Específica de empleado'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    '2026-09-20',
+    '08:00:00',
+    '10:00:00',
+    0,
+    'Reunión interna',
+    1,
+    NOW(),
+    NOW()
+);
+
+-- Restricción adicional para demostrar otro bloqueo parcial por horas.
+INSERT INTO restricciones_horario
+(tipoRestriccionId, empleadoId, fecha, horaInicio, horaFin, todoElDia, motivo, activo, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM tipos_restriccion_horario WHERE nombre = 'Específica de empleado'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    '2026-09-21',
+    '14:00:00',
+    '16:00:00',
+    0,
+    'Reunión de planificación',
+    1,
+    NOW(),
+    NOW()
+);
+
+SELECT r.id,
+       t.nombre AS tipo,
+       r.empleadoId,
+       r.fecha,
+       r.horaInicio,
+       r.horaFin,
+       r.todoElDia,
+       r.motivo,
+       r.activo
+FROM restricciones_horario r
+JOIN tipos_restriccion_horario t
+    ON r.tipoRestriccionId = t.id
+ORDER BY r.fecha;
+
+
+-- ============================================================
+-- 9. CLIENTES
+-- ============================================================
+
+INSERT INTO usuarios
+(nombre, primerApellido, segundoApellido, correo, telefono, passwordHash, activo, rolId, creadoEn, actualizadoEn)
+VALUES
+(
+    'Susana',
+    'Rodríguez',
+    'Mora',
+    'susana@gmail.com',
+    '88880004',
+    '$2b$10$Dw1KlAOHXd6QmVwO2VfCburEHVMKTNytqGmo7XoX1qh5kv82h9pe2',
+    1,
+    (SELECT id FROM roles WHERE nombre = 'Cliente'),
+    NOW(),
+    NOW()
+),
+(
+    'Sofía',
+    'Hernández',
+    'Castro',
+    'sofia@gmail.com',
+    '88880005',
+    '$2b$10$oYLS0Iziu5MLart6NtJpw.wyGnu72QnqtZ4zQGZxxRXW5RZF4DKO6',
+    1,
+    (SELECT id FROM roles WHERE nombre = 'Cliente'),
+    NOW(),
+    NOW()
+);
+
+SELECT id, nombre, primerApellido, segundoApellido, correo, telefono, activo, rolId, creadoEn, actualizadoEn
+FROM usuarios
+WHERE correo IN ('susana@gmail.com', 'sofia@gmail.com')
+ORDER BY id;
+
+
+-- ============================================================
+-- 10. CITAS PRECARGADAS
+-- ============================================================
+
+-- PENDIENTES: 4
+
+INSERT INTO citas
+(clienteId, empleadoId, servicioId, estadoCitaId, creadoPorUsuarioId, fecha, horaInicio, horaFin, duracionMinutos, precioServicio, costoAdicionales, costoTotal, observaciones, motivoCancelacion, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Pendiente'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-17',
+    '09:00:00',
+    '10:00:00',
+    60,
+    12500.00,
+    0.00,
+    12500.00,
+    'Cita de manicure.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Pendiente'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-17',
+    '10:00:00',
+    '11:00:00',
+    60,
+    7500.00,
+    0.00,
+    7500.00,
+    'Esmaltado regular.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Pendiente'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-18',
+    '11:00:00',
+    '11:30:00',
+    30,
+    12500.00,
+    0.00,
+    12500.00,
+    'Pedicure normal.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure SPA'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Pendiente'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-18',
+    '14:00:00',
+    '14:30:00',
+    30,
+    13500.00,
+    0.00,
+    13500.00,
+    'Manicure SPA.',
+    NULL,
+    NOW(),
+    NOW()
+);
+
+
+-- CONFIRMADAS: 4
+
+INSERT INTO citas
+(clienteId, empleadoId, servicioId, estadoCitaId, creadoPorUsuarioId, fecha, horaInicio, horaFin, duracionMinutos, precioServicio, costoAdicionales, costoTotal, observaciones, motivoCancelacion, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Semi Permanente'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Confirmada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-19',
+    '09:00:00',
+    '10:15:00',
+    75,
+    12000.00,
+    0.00,
+    12000.00,
+    'Esmaltado semipermanente.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure SPA'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Confirmada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-19',
+    '13:00:00',
+    '13:30:00',
+    30,
+    13500.00,
+    0.00,
+    13500.00,
+    'Pedicure SPA.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Confirmada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-20',
+    '10:00:00',
+    '11:00:00',
+    60,
+    12500.00,
+    0.00,
+    12500.00,
+    'Manicure normal.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Acrilico'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Confirmada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-20',
+    '15:00:00',
+    '15:45:00',
+    45,
+    14000.00,
+    0.00,
+    14000.00,
+    'Esmaltado acrílico.',
+    NULL,
+    NOW(),
+    NOW()
+);
+
+
+-- FINALIZADAS: 3
+
+INSERT INTO citas
+(clienteId, empleadoId, servicioId, estadoCitaId, creadoPorUsuarioId, fecha, horaInicio, horaFin, duracionMinutos, precioServicio, costoAdicionales, costoTotal, observaciones, motivoCancelacion, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure SPA'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Finalizada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-10',
+    '09:00:00',
+    '09:30:00',
+    30,
+    13500.00,
+    0.00,
+    13500.00,
+    'Manicure SPA finalizado.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Semi Permanente'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Finalizada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-11',
+    '11:00:00',
+    '12:15:00',
+    75,
+    12000.00,
+    0.00,
+    12000.00,
+    'Esmaltado semipermanente finalizado.',
+    NULL,
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Finalizada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-12',
+    '14:00:00',
+    '14:30:00',
+    30,
+    12500.00,
+    0.00,
+    12500.00,
+    'Pedicure normal finalizado.',
+    NULL,
+    NOW(),
+    NOW()
+);
+
+
+-- CANCELADAS: 2
+
+INSERT INTO citas
+(clienteId, empleadoId, servicioId, estadoCitaId, creadoPorUsuarioId, fecha, horaInicio, horaFin, duracionMinutos, precioServicio, costoAdicionales, costoTotal, observaciones, motivoCancelacion, creadoEn, actualizadoEn)
+VALUES
+(
+    (SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Cancelada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-13',
+    '10:00:00',
+    '11:00:00',
+    60,
+    12500.00,
+    0.00,
+    12500.00,
+    NULL,
+    'Cliente canceló la cita.',
+    NOW(),
+    NOW()
+),
+(
+    (SELECT id FROM usuarios WHERE correo = 'susana@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-002'),
+    (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Cancelada'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-08-14',
+    '15:00:00',
+    '16:00:00',
+    60,
+    7500.00,
+    0.00,
+    7500.00,
+    NULL,
+    'Establecimiento canceló la cita.',
+    NOW(),
+    NOW()
+);
+
+
+-- ============================================================
+-- 11. VERIFICACIONES FINALES
+-- ============================================================
+
+-- Especialidades
+SELECT id, nombre, activo
+FROM especialidades
+ORDER BY id;
+
+-- Servicios
+SELECT id, nombre, precioBase, duracionMinutos, especialidadId, creadoEn, actualizadoEn
+FROM servicios
+ORDER BY id;
+
+-- Servicios adicionales
+SELECT id, nombre, precio, activo, creadoEn, actualizadoEn
+FROM servicios_adicionales
+ORDER BY id;
+
+-- Empleados
+SELECT e.id, e.codigoEmpleado, u.nombre, u.primerApellido, es.nombre AS especialidad
+FROM empleados e
+JOIN usuarios u ON e.usuarioId = u.id
+JOIN especialidades es ON e.especialidadId = es.id
+ORDER BY e.id;
+
+-- Servicios por empleado
+SELECT e.codigoEmpleado, u.nombre AS empleado, s.nombre AS servicio
+FROM _empleadoServicios es
+JOIN empleados e ON es.A = e.id
+JOIN usuarios u ON e.usuarioId = u.id
+JOIN servicios s ON es.B = s.id
+ORDER BY e.id, s.id;
+
+-- Restricciones
+SELECT r.id, t.nombre AS tipo, r.empleadoId, r.fecha, r.horaInicio, r.horaFin, r.todoElDia, r.motivo, r.activo
+FROM restricciones_horario r
+JOIN tipos_restriccion_horario t ON r.tipoRestriccionId = t.id
+ORDER BY r.fecha;
+
+-- Citas
+SELECT
+    c.id,
+    c.fecha,
+    c.horaInicio,
+    c.horaFin,
+    u.nombre AS cliente,
+    e.codigoEmpleado,
+    s.nombre AS servicio,
+    ec.nombre AS estado,
+    c.precioServicio,
+    c.costoTotal
+FROM citas c
+JOIN usuarios u ON c.clienteId = u.id
+JOIN empleados e ON c.empleadoId = e.id
+JOIN servicios s ON c.servicioId = s.id
+JOIN estados_cita ec ON c.estadoCitaId = ec.id
+ORDER BY c.fecha, c.horaInicio;
+
+-- Cantidad de citas por estado
+SELECT ec.nombre AS estado, COUNT(*) AS cantidad
+FROM citas c
+JOIN estados_cita ec ON c.estadoCitaId = ec.id
+GROUP BY ec.id, ec.nombre
+ORDER BY ec.id;
