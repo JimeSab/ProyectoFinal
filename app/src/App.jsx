@@ -16,6 +16,7 @@ import { ServicesEditPage } from "./pages/ServicesEditPage";
 import { AdditionalsPage } from "./pages/AdditionalsPage";
 import { AdditionalCreatePage } from "./pages/AdditionalCreatePage";
 
+import { AdditionalDetailPage } from "./pages/AdditionalDetailPage";
 /*
 Muestra la página 404 cuando el usuario intenta entrar
 en una dirección que no está registrada en Routes.
@@ -81,6 +82,14 @@ export default function App() {
                     únicamente cuando ninguna ruta anterior coincide.
                     */}
                     <Route path="*" element={<NotFoundPage />} />
+{/*Utiliza :id para recibir el identificador del adicional
+y mostrar la información del registro seleccionado.
+*/}
+<Route
+    path="/adicionales/:id"
+    element={<AdditionalDetailPage />}
+/>
+
                 </Routes>
             </main>
 
