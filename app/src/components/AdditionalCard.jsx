@@ -1,0 +1,125 @@
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { ArrowRight, Pencil } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+
+/*
+Muestra la información de un servicio adicional usando una tarjeta
+de shadcn para reutilizar el mismo diseño en todos los registros del listado.
+*/
+export function AdditionalCard({
+    additional,
+    onRequestStatusChange,
+    changingStatus = false,
+}) {
+    return (
+        <Card className="h-full">
+
+            {/*
+            Muestra el nombre y utiliza Badge para representar visualmente
+            si el servicio adicional está activo o inactivo.
+            */}
+            <CardHeader className="grid grid-cols-[1fr_auto] items-start gap-3">
+                <CardTitle>{additional.nombre}</CardTitle>
+
+                <Badge
+                    variant="outline"
+                    className={
+                        additional.activo
+                            ? "border-green-200 bg-green-50 text-green-700"
+                            : "border-gray-200 bg-gray-100 text-gray-600"
+                    }
+                >
+                    {additional.activo ? "Activo" : "Inactivo"}
+                </Badge>
+            </CardHeader>
+
+            {/*
+            Muestra la descripción y convierte el precio usando Number
+            para después presentarlo con el formato de moneda de Costa Rica.
+            */}
+            <CardContent className="grid flex-1 gap-3">
+                <p className="text-sm text-muted-foreground">
+                    {additional.descripcion}
+                </p>
+
+                <p className="text-lg font-semibold">
+                    ₡{Number(additional.precio).toLocaleString("es-CR")}
+                </p>
+            </CardContent>
+
+            {/* Agrupa las acciones disponibles para cada servicio adicional. */}
+            <CardFooter className="flex flex-wrap gap-2">
+
+                {/*
+                Utiliza Link con el ID del adicional para navegar
+                a la página que mostrará la información completa.
+                */}
+                <Button asChild variant="outline" className="flex-1">
+                    <Link to={`/adicionales/${additional.id}`}>
+                        Detalle
+                        <ArrowRight />
+                    </Link>
+                </Button>
+
+                {/*
+                Utiliza Link con el ID del adicional para navegar
+                al formulario de edición del registro seleccionado.
+                */}
+                <Button asChild variant="outline" className="flex-1">
+                    <Link to={`/adicionales/${additional.id}/editar`}>
+                        Editar
+                        <Pencil />
+                    </Link>
+                </Button>
+
+                {/*
+                Utiliza onRequestStatusChange para comunicarle al listado
+                cuál adicional se desea activar o desactivar.
+                */}
+                <Button
+                    type="button"
+                    variant={additional.activo ? "destructive" : "secondary"}
+                    className="w-full"
+                    disabled={changingStatus}
+                    onClick={() => onRequestStatusChange(additional)}
+                >
+                    {changingStatus
+                        ? "Actualizando..."
+                        : additional.activo
+                            ? "Desactivar"
+                            : "Activar"}
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
+/*
+Utiliza PropTypes para comprobar que la tarjeta reciba el adicional,
+la función para cambiar su estado y un valor booleano de carga.
+*/
+AdditionalCard.propTypes = {
+    additional: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        nombre: PropTypes.string.isRequired,
+        descripcion: PropTypes.string.isRequired,
+        precio: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+        ]).isRequired,
+        activo: PropTypes.bool.isRequired,
+    }).isRequired,
+
+    onRequestStatusChange: PropTypes.func.isRequired,
+    changingStatus: PropTypes.bool,
+};
