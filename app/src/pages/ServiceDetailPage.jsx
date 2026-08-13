@@ -1,95 +1,125 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { getServiceById } from "../services/servicesService";
+import { Link, useParams } from "react-router-dom";
+
 import { PageHeader } from "@/components/PageHeader";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+
+import { getServiceById } from "@/services/servicesService";
+
+const IMAGE_URL = import.meta.env.VITE_API_URL;
 
 export function ServiceDetailPage() {
     const { id } = useParams();
     const [service, setService] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        async function fetchService() {
+        async function loadService() {
             try {
                 setLoading(true);
+                setError("");
                 const data = await getServiceById(id);
+                if (!data) {
+                    setService(null);
+                    return;
+                }
                 setService(data.data);
-            } catch (error) {
-                console.error(error);
-                setError("No se pudo cargar el detalle del servicio");
+            } catch {
+                setError("Ocurrió un error al cargar el servicio.");
             } finally {
                 setLoading(false);
             }
         }
 
-        fetchService();
+        loadService();
     }, [id]);
 
     if (loading) {
-        return <p className="text-center text-muted-foreground">Cargando detalle...</p>;
+        return <p className="text-muted-foreground">Cargando detalle...</p>;
     }
 
     if (error) {
-        return (
-            <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        );
+        return <Alert>{error}</Alert>;
     }
 
     if (!service) {
         return (
-            <Alert variant="destructive">
-                <AlertDescription>El servicio no existe.</AlertDescription>
-            </Alert>
+            <section className="space-y-4">
+                <PageHeader
+                    title="Servicio no encontrado"
+                    description="No existe un servicio asociado al identificador solicitado."
+                />
+                <Button asChild variant="outline">
+                    <Link to="/servicios">Volver al listado de servicios</Link>
+                </Button>
+            </section>
         );
     }
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
     return (
         <section className="space-y-6">
+            <Button asChild variant="outline">
+                <Link to="/servicios">Volver al listado de servicios</Link>
+            </Button>
+
             <PageHeader
                 title={service.nombre}
-                description="Detalle del servicio"
+                description="Información detallada del servicio seleccionado"
             />
 
-            <div className="grid gap-6 md:grid-cols-2">
-                <div className="rounded-xl overflow-hidden border bg-white">
+            <Card className="overflow-hidden">
+                {service.imagen && (
                     <img
-                        src={`${API_URL}/images/${service.imagen}`}
+                        src={`${IMAGE_URL}/images/${service.imagen}`}
                         alt={service.nombre}
-                        className="h-full w-full object-cover"
+                        className="h-72 w-full object-cover"
                     />
-                </div>
+                )}
 
-                <div className="space-y-4 rounded-xl border bg-white p-6">
-                    <p>
-                        <strong>Descripción:</strong> {service.descripcion}
+                <CardHeader>
+                    <CardTitle>{service.nombre}</CardTitle>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                    <p className="leading-relaxed text-muted-foreground">
+                        {service.descripcion}
                     </p>
+
                     <p>
                         <strong>Precio base:</strong> ₡
                         {Number(service.precioBase).toLocaleString("es-CR")}
                     </p>
+
                     <p>
                         <strong>Duración:</strong> {service.duracionMinutos} minutos
                     </p>
-                    <p>
-                        <strong>Estado:</strong>{" "}
-                        {service.activo ? "Activo" : "Inactivo"}
-                    </p>
+
                     <p>
                         <strong>Especialidad ID:</strong> {service.especialidadId}
                     </p>
 
-                    <Button asChild className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]">
-                        <Link to="/servicios">Volver</Link>
-                    </Button>
-                </div>
-            </div>
+                    <p>
+                        <strong>Estado:</strong>{" "}
+                        {service.activo ? "Activo" : "Inactivo"}
+                    </p>
+
+                    <div className="flex gap-3">
+                        <Button asChild>
+                            <Link to={`/servicios/${service.id}/editar`}>
+                                Editar servicio
+                            </Link>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
         </section>
     );
 }
