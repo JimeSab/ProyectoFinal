@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { RoleRoute } from "./auth/RoleRoute";
 
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
@@ -20,12 +21,13 @@ import { AdditionalCreatePage } from "./pages/AdditionalCreatePage";
 import { AdditionalDetailPage } from "./pages/AdditionalDetailPage";
 import { AdditionalEditPage } from "./pages/AdditionalEditPage";
 
+import { RestrictionsPage } from "./pages/RestrictionsPage";
+import { RestrictionDetailPage } from "./pages/RestrictionDetailPage";
+
 import { EmployeesPage } from "./pages/EmployeesPage";
 import { EmployeeCreatePage } from "./pages/EmployeeCreatePage";
 import { EmployeeEditPage } from "./pages/EmployeeEditPage";
 import { EmployeeDetailPage } from "./pages/EmployeeDetailPage";
-
-import { RoleRoute } from "./auth/RoleRoute";
 
 /*
 Muestra la página 404 cuando el usuario intenta entrar
@@ -44,54 +46,67 @@ export default function App() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-100">
             <Navbar />
+
             <main className="flex-1 max-w-5xl mx-auto p-4 w-full">
                 <Routes>
+                    {/* Páginas generales */}
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/registro" element={<RegisterPage />} />
-                    <Route path="/perfil" element={
-                        <ProtectedRoute>
-                            <ProfilePage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/servicios/nuevo" element={
-                        <ProtectedRoute>
-                            <ServicesCreatePage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/servicios/:id/editar" element={
-                        <ProtectedRoute>
-                            <ServicesEditPage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/adicionales/nuevo" element={
-                        <ProtectedRoute>
-                            <AdditionalCreatePage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/adicionales/:id/editar" element={
-                        <ProtectedRoute>
-                            <AdditionalEditPage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-                    <Route path="/servicios" element={<ServicesPage />} />
-                    <Route path="/servicios/nuevo" element={
-                        <ProtectedRoute>
-                            <RoleRoute allowedRoles={["Administrador"]}>
-                                <ServicesCreatePage />
-                            </RoleRoute>
-                        </ProtectedRoute>} />
-                    <Route path="/servicios/:id" element={<ServiceDetailPage />} />
-                    <Route path="/servicios/:id/editar" element={
-                        <ProtectedRoute>
-                            <RoleRoute allowedRoles={["Administrador"]}>
-                                <ServicesEditPage />
-                            </RoleRoute>
-                        </ProtectedRoute>} />
+                    <Route
+                        path="/perfil"
+                        element={
+                            <ProtectedRoute>
+                                <ProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
 
-                    <Route path="/adicionales" element={<AdditionalsPage />} />
+                    <Route
+                        path="/unauthorized"
+                        element={<UnauthorizedPage />}
+                    />
+
+                    {/* Servicios */}
+                    <Route
+                        path="/servicios"
+                        element={<ServicesPage />}
+                    />
+
+                    <Route
+                        path="/servicios/nuevo"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <ServicesCreatePage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/servicios/:id"
+                        element={<ServiceDetailPage />}
+                    />
+
+                    <Route
+                        path="/servicios/:id/editar"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <ServicesEditPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Adicionales */}
+                    <Route
+                        path="/adicionales"
+                        element={<AdditionalsPage />}
+                    />
+
                     <Route
                         path="/adicionales/nuevo"
                         element={
@@ -102,7 +117,12 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="/adicionales/:id" element={<AdditionalDetailPage />} />
+
+                    <Route
+                        path="/adicionales/:id"
+                        element={<AdditionalDetailPage />}
+                    />
+
                     <Route
                         path="/adicionales/:id/editar"
                         element={
@@ -114,6 +134,18 @@ export default function App() {
                         }
                     />
 
+                    {/* Restricciones de horario */}
+                    <Route
+                        path="/restricciones"
+                        element={<RestrictionsPage />}
+                    />
+
+                    <Route
+                        path="/restricciones/:id"
+                        element={<RestrictionDetailPage />}
+                    />
+
+                    {/* Empleados */}
                     <Route
                         path="/empleados"
                         element={
@@ -124,6 +156,7 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
+
                     <Route
                         path="/empleados/nuevo"
                         element={
@@ -134,6 +167,7 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
+
                     <Route
                         path="/empleados/:id"
                         element={
@@ -144,6 +178,7 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
+
                     <Route
                         path="/empleados/:id/editar"
                         element={
@@ -158,6 +193,7 @@ export default function App() {
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </main>
+
             <Footer />
         </div>
     );
