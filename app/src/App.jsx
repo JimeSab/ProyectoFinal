@@ -17,6 +17,8 @@ import { AdditionalsPage } from "./pages/AdditionalsPage";
 import { AdditionalCreatePage } from "./pages/AdditionalCreatePage";
 
 import { AdditionalDetailPage } from "./pages/AdditionalDetailPage";
+
+import { AdditionalEditPage } from "./pages/AdditionalEditPage";
 /*
 Muestra la página 404 cuando el usuario intenta entrar
 en una dirección que no está registrada en Routes.
@@ -90,6 +92,14 @@ y mostrar la información del registro seleccionado.
     element={<AdditionalDetailPage />}
 />
 
+{/*
+Utiliza :id para identificar el adicional y abrir
+su información dentro del formulario de edición.
+*/}
+<Route
+    path="/adicionales/:id/editar"
+    element={<AdditionalEditPage />}
+/>
                 </Routes>
             </main>
 
