@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/auth/useAuth";
 
 import {
     getAdditionals,
@@ -56,6 +57,9 @@ export function AdditionalsPage() {
     para deshabilitar únicamente el botón de ese registro.
     */
     const [changingId, setChangingId] = useState(null);
+
+    const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.rol?.nombre === "Administrador";
 
     /*
     Ejecuta loadAdditionals usando useEffect cuando se abre la página
@@ -220,14 +224,14 @@ export function AdditionalsPage() {
                     description="Listado de servicios adicionales disponibles"
                 />
 
-                <Button
-                    asChild
-                    className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]"
-                >
-                    <Link to="/adicionales/nuevo">
-                        Nuevo adicional
-                    </Link>
-                </Button>
+                {isAuthenticated && isAdmin && (
+                    <Button
+                        asChild
+                        className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]"
+                    >
+                        <Link to="/adicionales/nuevo">Nuevo adicional</Link>
+                    </Button>
+                )}
             </div>
 
             {/*

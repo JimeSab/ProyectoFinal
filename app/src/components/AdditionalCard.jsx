@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil } from "lucide-react";
+import { useAuth } from "@/auth/useAuth";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,9 @@ export function AdditionalCard({
     onRequestStatusChange,
     changingStatus = false,
 }) {
+    const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.rol?.nombre === "Administrador";
+    
     return (
         <Card className="h-full">
 
@@ -75,30 +79,34 @@ export function AdditionalCard({
                 Utiliza Link con el ID del adicional para navegar
                 al formulario de edición del registro seleccionado.
                 */}
-                <Button asChild variant="outline" className="flex-1">
-                    <Link to={`/adicionales/${additional.id}/editar`}>
-                        Editar
-                        <Pencil />
-                    </Link>
-                </Button>
+                {isAuthenticated && isAdmin && (
+                    <>
+                        <Button asChild variant="outline" className="flex-1">
+                            <Link to={`/adicionales/${additional.id}/editar`}>
+                                Editar
+                                <Pencil />
+                            </Link>
+                        </Button>
 
                 {/*
                 Utiliza onRequestStatusChange para comunicarle al listado
                 cuál adicional se desea activar o desactivar.
                 */}
-                <Button
-                    type="button"
-                    variant={additional.activo ? "destructive" : "secondary"}
-                    className="w-full"
-                    disabled={changingStatus}
-                    onClick={() => onRequestStatusChange(additional)}
-                >
-                    {changingStatus
-                        ? "Actualizando..."
-                        : additional.activo
-                            ? "Desactivar"
-                            : "Activar"}
-                </Button>
+                        <Button
+                            type="button"
+                            variant={additional.activo ? "destructive" : "secondary"}
+                            className="w-full"
+                            disabled={changingStatus}
+                            onClick={() => onRequestStatusChange(additional)}
+                        >
+                            {changingStatus
+                                ? "Actualizando..."
+                                : additional.activo
+                                    ? "Desactivar"
+                                    : "Activar"}
+                        </Button>
+                    </>
+                )}
             </CardFooter>
         </Card>
     );

@@ -2,11 +2,13 @@ import { Routes, Route } from "react-router-dom";
 
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
 
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 
 import { ServicesPage } from "./pages/ServicesPage";
 import { ServiceDetailPage } from "./pages/ServiceDetailPage";
@@ -15,10 +17,11 @@ import { ServicesEditPage } from "./pages/ServicesEditPage";
 
 import { AdditionalsPage } from "./pages/AdditionalsPage";
 import { AdditionalCreatePage } from "./pages/AdditionalCreatePage";
-
 import { AdditionalDetailPage } from "./pages/AdditionalDetailPage";
-
 import { AdditionalEditPage } from "./pages/AdditionalEditPage";
+
+import { RoleRoute } from "./auth/RoleRoute";
+
 /*
 Muestra la página 404 cuando el usuario intenta entrar
 en una dirección que no está registrada en Routes.
@@ -36,73 +39,79 @@ export default function App() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-100">
             <Navbar />
-
             <main className="flex-1 max-w-5xl mx-auto p-4 w-full">
-                {/*
-                Utiliza Routes y Route de React Router para relacionar
-                cada dirección del navegador con su página correspondiente.
-                */}
                 <Routes>
-                    {/* Rutas generales del sistema. */}
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/registro" element={<RegisterPage />} />
-                    <Route path="/perfil" element={<ProfilePage />} />
+                    <Route path="/perfil" element={
+                        <ProtectedRoute>
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/servicios/nuevo" element={
+                        <ProtectedRoute>
+                            <ServicesCreatePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/servicios/:id/editar" element={
+                        <ProtectedRoute>
+                            <ServicesEditPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/adicionales/nuevo" element={
+                        <ProtectedRoute>
+                            <AdditionalCreatePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/adicionales/:id/editar" element={
+                        <ProtectedRoute>
+                            <AdditionalEditPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-                    {/* Rutas utilizadas para gestionar los servicios principales. */}
-                    <Route
-                        path="/servicios"
-                        element={<ServicesPage />}
-                    />
-                    <Route
-                        path="/servicios/nuevo"
-                        element={<ServicesCreatePage />}
-                    />
-                    <Route
-                        path="/servicios/:id"
-                        element={<ServiceDetailPage />}
-                    />
-                    <Route
-                        path="/servicios/:id/editar"
-                        element={<ServicesEditPage />}
-                    />
+                    <Route path="/servicios" element={<ServicesPage />} />
+                    <Route path="/servicios/nuevo" element={
+                        <ProtectedRoute>
+                            <RoleRoute allowedRoles={["Administrador"]}>
+                                <ServicesCreatePage />
+                            </RoleRoute>
+                        </ProtectedRoute>} />
+                    <Route path="/servicios/:id" element={<ServiceDetailPage />} />
+                    <Route path="/servicios/:id/editar" element={
+                        <ProtectedRoute>
+                            <RoleRoute allowedRoles={["Administrador"]}>
+                                <ServicesEditPage />
+                            </RoleRoute>
+                        </ProtectedRoute>} />
 
-                    {/* Muestra el listado de servicios adicionales. */}
-                    <Route
-                        path="/adicionales"
-                        element={<AdditionalsPage />}
-                    />
-
-                    {/* Muestra el formulario para crear un servicio adicional. */}
+                    <Route path="/adicionales" element={<AdditionalsPage />} />
                     <Route
                         path="/adicionales/nuevo"
-                        element={<AdditionalCreatePage />}
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <AdditionalCreatePage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="/adicionales/:id" element={<AdditionalDetailPage />} />
+                    <Route
+                        path="/adicionales/:id/editar"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <AdditionalEditPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
                     />
 
-                    {/*
-                    La ruta con * se coloca al final para mostrar el 404
-                    únicamente cuando ninguna ruta anterior coincide.
-                    */}
                     <Route path="*" element={<NotFoundPage />} />
-{/*Utiliza :id para recibir el identificador del adicional
-y mostrar la información del registro seleccionado.
-*/}
-<Route
-    path="/adicionales/:id"
-    element={<AdditionalDetailPage />}
-/>
-
-{/*
-Utiliza :id para identificar el adicional y abrir
-su información dentro del formulario de edición.
-*/}
-<Route
-    path="/adicionales/:id/editar"
-    element={<AdditionalEditPage />}
-/>
                 </Routes>
             </main>
-
             <Footer />
         </div>
     );

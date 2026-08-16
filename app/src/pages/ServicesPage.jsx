@@ -6,12 +6,15 @@ import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/auth/useAuth";
 
 export function ServicesPage() {
     const [services, setServices] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.rol?.nombre === "Administrador";
 
     useEffect(() => {
         async function fetchServices() {
@@ -59,9 +62,14 @@ export function ServicesPage() {
                     isBadge={false}
                 />
 
-                <Button asChild className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]">
-                    <Link to="/servicios/nuevo">Nuevo servicio</Link>
-                </Button>
+                {isAuthenticated && isAdmin && (
+                    <Button
+                        asChild
+                        className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]"
+                    >
+                        <Link to="/servicios/nuevo">Nuevo servicio</Link>
+                    </Button>
+                )}
             </div>
 
             <SearchBar value={search} onChange={setSearch} />

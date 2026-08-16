@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "@/auth/useAuth";
 
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ export function ServiceDetailPage() {
     const [service, setService] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.rol?.nombre === "Administrador";
 
     useEffect(() => {
         async function loadService() {
@@ -67,7 +70,7 @@ export function ServiceDetailPage() {
     return (
         <section className="space-y-6">
             <Button asChild variant="outline">
-                <Link to="/servicios">Volver al listado de servicios</Link>
+                <Link to="/servicios">Volver</Link>
             </Button>
 
             <PageHeader
@@ -111,13 +114,15 @@ export function ServiceDetailPage() {
                         {service.activo ? "Activo" : "Inactivo"}
                     </p>
 
+                    {isAuthenticated && isAdmin && (
                     <div className="flex gap-3">
-                        <Button asChild>
-                            <Link to={`/servicios/${service.id}/editar`}>
-                                Editar servicio
-                            </Link>
-                        </Button>
-                    </div>
+                            <Button asChild>
+                                <Link to={`/servicios/${service.id}/editar`}>
+                                    Editar servicio
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </section>

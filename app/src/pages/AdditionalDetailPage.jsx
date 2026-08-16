@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "@/auth/useAuth";
 
 import { PageHeader } from "@/components/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -13,21 +14,6 @@ import {
 } from "@/components/ui/card";
 
 import { getAdditionalById } from "@/services/additionalsService";
-
-/*
-Convierte la fecha técnica recibida del API usando Intl.DateTimeFormat
-para mostrarla en español y en un formato fácil de comprender.
-*/
-function formatDate(date) {
-    if (!date) {
-        return "No disponible";
-    }
-
-    return new Intl.DateTimeFormat("es-CR", {
-        dateStyle: "long",
-        timeStyle: "short",
-    }).format(new Date(date));
-}
 
 export function AdditionalDetailPage() {
     /*
@@ -53,6 +39,9 @@ export function AdditionalDetailPage() {
     si el adicional no existe o falla la conexión.
     */
     const [error, setError] = useState("");
+
+    const { isAuthenticated, user } = useAuth();
+    const isAdmin = user?.rol?.nombre === "Administrador";
 
     /*
     Consulta el adicional usando useEffect cuando se abre la página
@@ -136,7 +125,7 @@ export function AdditionalDetailPage() {
             */}
             <Button asChild variant="outline">
                 <Link to="/adicionales">
-                    Volver al listado
+                    Volver
                 </Link>
             </Button>
 
@@ -202,35 +191,21 @@ export function AdditionalDetailPage() {
                     </div>
 
                     {/*
-                    Utiliza formatDate para convertir las fechas técnicas
-                    del API a un formato comprensible para el usuario.
-                    */}
-                    <div className="grid gap-4 border-t pt-4 text-sm sm:grid-cols-2">
-                        <p>
-                            <strong>Fecha de creación:</strong>{" "}
-                            {formatDate(additional.creadoEn)}
-                        </p>
-
-                        <p>
-                            <strong>Última actualización:</strong>{" "}
-                            {formatDate(additional.actualizadoEn)}
-                        </p>
-                    </div>
-
-                    {/*
                     Utiliza el ID dentro de Link para abrir la página
                     de edición correspondiente al adicional seleccionado.
                     */}
-                    <Button
-                        asChild
-                        className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]"
-                    >
-                        <Link
-                            to={`/adicionales/${additional.id}/editar`}
+                    {isAuthenticated && isAdmin && (
+                        <Button
+                            asChild
+                            className="bg-[#F5AFAF] text-black hover:bg-[#f29c9c]"
                         >
-                            Editar servicio adicional
-                        </Link>
-                    </Button>
+                            <Link
+                                to={`/adicionales/${additional.id}/editar`}
+                            >
+                                Editar servicio adicional
+                            </Link>
+                        </Button>
+                    )}
                 </CardContent>
             </Card>
         </section>
