@@ -20,6 +20,11 @@ import { AdditionalCreatePage } from "./pages/AdditionalCreatePage";
 import { AdditionalDetailPage } from "./pages/AdditionalDetailPage";
 import { AdditionalEditPage } from "./pages/AdditionalEditPage";
 
+import { EmployeesPage } from "./pages/EmployeesPage";
+import { EmployeeCreatePage } from "./pages/EmployeeCreatePage";
+import { EmployeeEditPage } from "./pages/EmployeeEditPage";
+import { EmployeeDetailPage } from "./pages/EmployeeDetailPage";
+
 import { RoleRoute } from "./auth/RoleRoute";
 
 /*
@@ -104,6 +109,47 @@ export default function App() {
                             <ProtectedRoute>
                                 <RoleRoute allowedRoles={["Administrador"]}>
                                     <AdditionalEditPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/empleados"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <EmployeesPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/empleados/nuevo"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <EmployeeCreatePage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/empleados/:id"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <EmployeeDetailPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/empleados/:id/editar"
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador"]}>
+                                    <EmployeeEditPage />
                                 </RoleRoute>
                             </ProtectedRoute>
                         }

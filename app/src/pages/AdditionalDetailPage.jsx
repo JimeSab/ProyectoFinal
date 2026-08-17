@@ -110,7 +110,7 @@ export function AdditionalDetailPage() {
 
                 <Button asChild variant="outline">
                     <Link to="/adicionales">
-                        Volver al listado
+                        Volver
                     </Link>
                 </Button>
             </section>
