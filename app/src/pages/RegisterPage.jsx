@@ -1,7 +1,10 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserPlus, Mail, LockKeyhole, User, Phone } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { registrationSchema } from "@/schemas/registrationSchema";
 
 import { registerUser } from "@/services/authService";
 import { Button } from "@/components/ui/button";
@@ -17,56 +20,37 @@ import { Input } from "@/components/ui/input";
 export function RegisterPage() {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        nombre: "",
-        primerApellido: "",
-        segundoApellido: "",
-        correo: "",
-        telefono: "",
-        password: "",
+    const {
+        register,
+        handleSubmit: handleFormSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(registrationSchema),
+        defaultValues: {
+            nombre: "",
+            primerApellido: "",
+            segundoApellido: "",
+            correo: "",
+            telefono: "",
+            password: "",
+        },
     });
 
-    const [loading, setLoading] = useState(false);
-
-    function handleChange(event) {
-        const { name, value } = event.target;
-        setFormData((previousData) => ({
-            ...previousData,
-            [name]: value,
-        }));
-    }
-
-    async function handleSubmit(event) {
-        event.preventDefault();
-
-        if (
-            !formData.nombre.trim() ||
-            !formData.primerApellido.trim() ||
-            !formData.correo.trim() ||
-            !formData.password.trim()
-        ) {
-            toast.error("Debe completar los campos obligatorios.");
-            return;
-        }
-
+    async function onSubmit(formData) {
         try {
-            setLoading(true);
-
             await registerUser({
                 nombre: formData.nombre.trim(),
                 primerApellido: formData.primerApellido.trim(),
-                segundoApellido: formData.segundoApellido.trim() || null,
+                segundoApellido: formData.segundoApellido?.trim() || null,
                 correo: formData.correo.trim(),
-                telefono: formData.telefono.trim() || null,
+                telefono: formData.telefono?.trim() || null,
                 password: formData.password,
             });
 
             toast.success("Cliente registrado correctamente.");
-            navigate("/login");
+            navigate("/login", { replace: true });
         } catch (error) {
             toast.error(error.message);
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -86,7 +70,7 @@ export function RegisterPage() {
                 </CardHeader>
 
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
                             <label htmlFor="nombre" className="text-sm font-medium">
                                 Nombre
@@ -95,15 +79,17 @@ export function RegisterPage() {
                                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="nombre"
-                                    name="nombre"
                                     type="text"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
                                     placeholder="María"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("nombre")}
                                 />
+                                {errors.nombre && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.nombre.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -115,15 +101,17 @@ export function RegisterPage() {
                                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="primerApellido"
-                                    name="primerApellido"
                                     type="text"
-                                    value={formData.primerApellido}
-                                    onChange={handleChange}
                                     placeholder="López"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("primerApellido")}
                                 />
+                                {errors.primerApellido && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.primerApellido.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -135,14 +123,17 @@ export function RegisterPage() {
                                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="segundoApellido"
-                                    name="segundoApellido"
                                     type="text"
-                                    value={formData.segundoApellido}
-                                    onChange={handleChange}
                                     placeholder="Mora"
                                     className="pl-9"
-                                    disabled={loading}
+                                    disabled={isSubmitting}
+                                    {...register("segundoApellido")}
                                 />
+                                {errors.segundoApellido && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.segundoApellido.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -154,15 +145,17 @@ export function RegisterPage() {
                                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="correo"
-                                    name="correo"
                                     type="email"
-                                    value={formData.correo}
-                                    onChange={handleChange}
                                     placeholder="usuario@email.com"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("correo")}
                                 />
+                                {errors.correo && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.correo.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -174,14 +167,17 @@ export function RegisterPage() {
                                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="telefono"
-                                    name="telefono"
                                     type="text"
-                                    value={formData.telefono}
-                                    onChange={handleChange}
                                     placeholder="8888-8888"
                                     className="pl-9"
-                                    disabled={loading}
+                                    disabled={isSubmitting}
+                                    {...register("telefono")}
                                 />
+                                {errors.telefono && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.telefono.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -193,25 +189,27 @@ export function RegisterPage() {
                                 <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="password"
-                                    name="password"
                                     type="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
                                     placeholder="Cliente123"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("password")}
                                 />
+                                {errors.password && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.password.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
                             className="w-full"
-                            disabled={loading}
+                            disabled={isSubmitting}
                         >
                             <UserPlus className="mr-2 h-4 w-4" />
-                            {loading ? "Registrando..." : "Registrarse"}
+                            {isSubmitting ? "Registrando..." : "Registrarse"}
                         </Button>
 
                         <p className="text-center text-sm text-muted-foreground">

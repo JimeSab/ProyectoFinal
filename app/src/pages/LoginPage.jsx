@@ -1,7 +1,10 @@
-import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { LogIn, Mail, LockKeyhole } from "lucide-react"
 import toast from "react-hot-toast"
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { loginSchema } from "@/schemas/loginSchema";
 
 import { useAuth } from "@/auth/useAuth"
 import { Button } from "@/components/ui/button"
@@ -19,43 +22,31 @@ export function LoginPage() {
     const location = useLocation()
     const { login, isAuthenticated } = useAuth()
 
-    const [formData, setFormData] = useState({
-        correo: "",
-        password: ""
-    })
+    const {
+        register,
+        handleSubmit: handleFormSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            correo: "",
+            password: "",
+        },
+    });
 
-    const [loading, setLoading] = useState(false)
-
-    function handleChange(service) {
-        const { name, value } = service.target
-        setFormData((previousData) => ({
-            ...previousData,
-            [name]: value
-        }))
-    }
-
-    async function handleSubmit(service) {
-        service.preventDefault()
-        if (!formData.correo.trim() || !formData.password.trim()) {
-            toast.error("Debe completar todos los campos.")
-            return
-        }
+    async function onSubmit(formData) {
         try {
-            setLoading(true)
-
             const user = await login({
                 correo: formData.correo.trim(),
-                password: formData.password
-            })
+                password: formData.password,
+            });
 
-            toast.success(`Bienvenido, ${user.fullName}.`)
+            toast.success(`Bienvenido, ${user.nombre || user.correo}.`);
 
             const previousRoute = location.state?.from?.pathname;
             navigate(previousRoute || "/", { replace: true });
         } catch (error) {
             toast.error(error.message);
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -99,7 +90,7 @@ export function LoginPage() {
                 </CardHeader>
 
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-5" noValidate>
                         <div className="space-y-2">
                             <label htmlFor="correo" className="text-sm font-medium">
                                 Correo electrónico
@@ -108,16 +99,18 @@ export function LoginPage() {
                                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="correo"
-                                    name="correo"
                                     type="email"
-                                    value={formData.correo}
-                                    onChange={handleChange}
                                     placeholder="usuario@email.com"
                                     autoComplete="email"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("correo")}
                                 />
+                                {errors.correo && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.correo.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -129,26 +122,28 @@ export function LoginPage() {
                                 <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="password"
-                                    name="password"
                                     type="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
                                     placeholder="Ingrese su contraseña"
                                     autoComplete="current-password"
                                     className="pl-9"
-                                    disabled={loading}
-                                    required
+                                    disabled={isSubmitting}
+                                    {...register("password")}
                                 />
+                                {errors.password && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.password.message}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
                             className="w-full"
-                            disabled={loading}
+                            disabled={isSubmitting}
                         >
                             <LogIn className="mr-2 h-4 w-4" />
-                            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+                            {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
                         </Button>
 
                         <p className="text-center text-sm text-muted-foreground">
