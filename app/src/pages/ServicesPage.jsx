@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getServices } from "../services/servicesService";
+import { getServices, updateServiceStatus } from "../services/servicesService";
 import { ServiceList } from "../components/ServiceList";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBar } from "@/components/SearchBar";
@@ -10,6 +10,7 @@ import { useAuth } from "@/auth/useAuth";
 
 export function ServicesPage() {
     const [services, setServices] = useState([]);
+    const [changingId, setChangingId] = useState(null);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,6 +33,41 @@ export function ServicesPage() {
 
         fetchServices();
     }, []);
+
+    async function handleStatusChange(service) {
+        const action = service.activo
+            ? "desactivar"
+            : "activar";
+
+        const confirmed = window.confirm(
+            `¿Desea ${action} el servicio "${service.nombre}"?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setChangingId(service.id);
+
+            const response = await updateServiceStatus(
+                service.id,
+                !service.activo
+            );
+
+            setServices((current) =>
+                current.map((item) =>
+                    item.id === service.id
+                        ? response.data
+                        : item
+                )
+            );
+        } catch (requestError) {
+            setError(requestError.message);
+        } finally {
+            setChangingId(null);
+        }
+    }
 
     const filteredServices = services.filter((service) =>
         service.nombre.toLowerCase().includes(search.toLowerCase())
@@ -77,7 +113,10 @@ export function ServicesPage() {
             {filteredServices.length === 0 ? (
                 <p>No hay resultados</p>
             ) : (
-                <ServiceList services={filteredServices} />
+                <ServiceList services={filteredServices} 
+                onRequestStatusChange={handleStatusChange}
+                changingId={changingId}
+                />
             )}
         </section>
     );

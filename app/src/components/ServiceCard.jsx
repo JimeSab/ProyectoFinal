@@ -9,8 +9,19 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/auth/useAuth";
 
-export function ServiceCard({ service }) {
+export function ServiceCard({
+    service,
+    onRequestStatusChange,
+    changingStatus = false,
+}) {
+    const { isAuthenticated, user } = useAuth();
+
+    const isAdmin =
+        user?.rol?.nombre === "Administrador";
+
     const API_URL = import.meta.env.VITE_API_URL;
 
     return (
@@ -27,6 +38,10 @@ export function ServiceCard({ service }) {
                 <CardTitle>{service.nombre}</CardTitle>
             </CardHeader>
 
+            <Badge variant="outline" className={`${service.activo ? "border-green-200 bg-green-50 text-green-700 position: center" : "border-gray-200 bg-gray-100 text-gray-600"} ml-4`}>
+                {service.activo ? "Activo" : "Inactivo"}
+            </Badge>
+
             <CardContent className="grid gap-2.5">
                 <p className="text-sm text-muted-foreground">
                     {service.descripcion}
@@ -42,7 +57,7 @@ export function ServiceCard({ service }) {
                 </p>
             </CardContent>
 
-            <CardFooter className="pt-3">
+            <CardFooter className="flex flex-col gap-2 pt-3">
                 <Button
                     asChild
                     variant="ghost"
@@ -53,6 +68,28 @@ export function ServiceCard({ service }) {
                         <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                     </Link>
                 </Button>
+
+                {isAuthenticated && isAdmin && (
+                    <Button
+                        type="button"
+                        variant={
+                            service.activo
+                                ? "destructive"
+                                : "secondary"
+                        }
+                        className="w-full mt-2"
+                        disabled={changingStatus}
+                        onClick={() =>
+                            onRequestStatusChange(service)
+                        }
+                    >
+                        {changingStatus
+                            ? "Actualizando..."
+                            : service.activo
+                                ? "Desactivar"
+                                : "Activar"}
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     );
@@ -66,5 +103,8 @@ ServiceCard.propTypes = {
         precioBase: PropTypes.string.isRequired,
         duracionMinutos: PropTypes.number.isRequired,
         imagen: PropTypes.string,
+        activo: PropTypes.bool.isRequired,
     }).isRequired,
+    changingStatus: PropTypes.bool,
+    onRequestStatusChange: PropTypes.func.isRequired,
 };

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
+import { uploadServiceImage } from "@/services/servicesService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { serviceSchema } from "@/schemas/serviceSchema";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,9 +40,11 @@ export function ServiceForm({
         register,
         handleSubmit,
         control,
+        setError,
         formState: { errors, isSubmitting },
         reset,
     } = useForm({
+        resolver: zodResolver(serviceSchema),
         defaultValues: {
             nombre: initialData?.nombre || "",
             descripcion: initialData?.descripcion || "",
@@ -62,17 +67,37 @@ export function ServiceForm({
         setImagePreview(previewURL)
     }
 
-    function handleValidSubmit(formData) {
-        const file = formData.imageUrl?.[0]
+    async function handleValidSubmit(formData) {
+        const file = formData.imagen?.[0];
+
+        if(!file && !initialData?.imagen) {
+            setError("imagen", {
+                type: "manual",
+                message: "Debe seleccionar una imagen"
+            });
+            return;
+        }
+
+        let imageName = initialData?.imagen || null;
+
+        if (file) {
+            imageName = await uploadServiceImage(
+                file,
+                initialData?.imagen || null
+            );
+        }
+
         const dataToSend = {
-            ...formData,
+            nombre: formData.nombre.trim(),
+            descripcion: formData.descripcion.trim(),
             precioBase: Number(formData.precioBase),
             duracionMinutos: Number(formData.duracionMinutos),
             especialidadId: Number(formData.especialidadId),
-            imagen: file || initialData?.imagen || null,
+            imagen: imageName,
         };
 
-        onSubmit(dataToSend);
+        await onSubmit(dataToSend);
+
         reset();
     }
     return (
@@ -221,10 +246,15 @@ export function ServiceForm({
                                     <Input
                                         id="imagen"
                                         type="file"
-                                        accept="image/*"
+                                        accept=".jpg,.jpeg,.png,.webp"
                                         className="hidden"
                                         {...register("imagen", { onChange: handleImageChange })}
                                     />
+                                    {errors.imagen && (
+                                        <p className="mt-1 text-sm text-destructive">
+                                            {errors.imagen.message}
+                                        </p>
+                                    )}
 
                                     <label
                                         htmlFor="imagen"
