@@ -29,6 +29,9 @@ import { EmployeeCreatePage } from "./pages/EmployeeCreatePage";
 import { EmployeeEditPage } from "./pages/EmployeeEditPage";
 import { EmployeeDetailPage } from "./pages/EmployeeDetailPage";
 
+import { SchedulesPage } from "./pages/SchedulesPage";
+import { ScheduleDetailPage } from "./pages/ScheduleDetailPage";
+
 /*
 Muestra la página 404 cuando el usuario intenta entrar
 en una dirección que no está registrada en Routes.
@@ -137,12 +140,34 @@ export default function App() {
                     {/* Restricciones de horario */}
                     <Route
                         path="/restricciones"
-                        element={<RestrictionsPage />}
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador", "Empleado"]}>
+                                    <RestrictionsPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
                     />
 
                     <Route
                         path="/restricciones/:id"
-                        element={<RestrictionDetailPage />}
+                        element={
+                            <ProtectedRoute>
+                                <RoleRoute allowedRoles={["Administrador", "Empleado"]}>
+                                    <RestrictionDetailPage />
+                                </RoleRoute>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/horarios"
+                        element={<SchedulesPage />}
+                    />
+
+                    <Route
+                        path="/horarios/:id"
+                        element={<ScheduleDetailPage />}
                     />
 
                     {/* Empleados */}
@@ -172,7 +197,7 @@ export default function App() {
                         path="/empleados/:id"
                         element={
                             <ProtectedRoute>
-                                <RoleRoute allowedRoles={["Administrador"]}>
+                                <RoleRoute allowedRoles={["Administrador", "Empleado"]}>
                                     <EmployeeDetailPage />
                                 </RoleRoute>
                             </ProtectedRoute>

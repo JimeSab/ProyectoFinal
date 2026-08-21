@@ -65,7 +65,7 @@ export function ServiceCard({
                 >
                     <Link to={`/servicios/${service.id}`}>
                         <span className="font-semibold">Ver detalles</span>
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5 bg-[#F9DFDF]" />
                     </Link>
                 </Button>
 

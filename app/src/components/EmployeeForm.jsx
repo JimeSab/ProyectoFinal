@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { employeeSchema } from "@/schemas/employeeSchema";
 
 export function EmployeeForm({
     onSubmit,
@@ -22,6 +24,7 @@ export function EmployeeForm({
         setValue,
         formState: { errors, isSubmitting },
     } = useForm({
+        resolver: zodResolver(employeeSchema),
         defaultValues: {
             usuarioId: initialData?.usuarioId ? String(initialData.usuarioId) : "",
             especialidadId: initialData?.especialidadId ? String(initialData.especialidadId) : "",
@@ -70,7 +73,7 @@ export function EmployeeForm({
                         <select
                             id="usuarioId"
                             className={`w-full rounded-md border px-3 py-2 ${errors.usuarioId ? "border-red-500" : ""}`}
-                            {...register("usuarioId", { required: "Debe seleccionar un usuario." })}
+                            {...register("usuarioId")}
                         >
                             <option value="">Seleccione un usuario</option>
                             {users.map((user) => (
@@ -105,7 +108,7 @@ export function EmployeeForm({
                         <select
                             id="especialidadId"
                             className={`w-full rounded-md border px-3 py-2 ${errors.especialidadId ? "border-red-500" : ""}`}
-                            {...register("especialidadId", { required: "Debe seleccionar una especialidad." })}
+                            {...register("especialidadId")}
                         >
                             <option value="">Seleccione una especialidad</option>
                             {specialties.map((specialty) => (
@@ -126,10 +129,7 @@ export function EmployeeForm({
                         <Input
                             id="codigoEmpleado"
                             placeholder="Ej: EMP-001"
-                            {...register("codigoEmpleado", {
-                                required: "El código es obligatorio.",
-                                minLength: { value: 3, message: "Debe tener al menos 3 caracteres." },
-                            })}
+                            {...register("codigoEmpleado")}
                         />
                         {errors.codigoEmpleado && (
                             <p className="mt-1 text-sm text-red-600">{errors.codigoEmpleado.message}</p>
@@ -151,6 +151,10 @@ export function EmployeeForm({
                     <div>
                         <p className="mb-3 text-sm font-medium">Servicios asignados *</p>
 
+                        <input
+                            type="hidden"
+                            {...register("servicioIds")}
+                        />
                         <div className="grid gap-3 md:grid-cols-2">
                             {services.map((service) => (
                                 <label key={service.id} className="flex items-start gap-3 rounded-md border p-3">
@@ -167,7 +171,7 @@ export function EmployeeForm({
 
                         {errors.servicioIds && (
                             <p className="mt-1 text-sm text-red-600">
-                                Debe seleccionar al menos un servicio.
+                                {errors.servicioIds.message}
                             </p>
                         )}
                     </div>

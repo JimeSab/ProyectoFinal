@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 
 import { PageHeader } from "@/components/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -38,6 +38,10 @@ export function EmployeeDetailPage() {
     const { id } = useParams();
     const { isAuthenticated, user } = useAuth();
     const isAdmin = user?.rol?.nombre === "Administrador";
+    const isEmployee = user?.rol?.nombre === "Empleado";
+    const canViewEmployee = isAdmin || (
+        isEmployee && String(user?.empleado?.id) === String(id)
+    );
 
     const [employee, setEmployee] = useState(null);
     const [agenda, setAgenda] = useState(null);
@@ -48,6 +52,9 @@ export function EmployeeDetailPage() {
     const [loadingAgenda, setLoadingAgenda] = useState(false);
     const [error, setError] = useState("");
     const [agendaError, setAgendaError] = useState("");
+    const backPath = isAdmin
+    ? "/empleados"
+    : "/";
 
     useEffect(() => {
         async function loadEmployee() {
@@ -95,16 +102,19 @@ export function EmployeeDetailPage() {
                     <AlertDescription>{error || "El empleado no existe."}</AlertDescription>
                 </Alert>
                 <Button asChild variant="outline">
-                    <Link to="/empleados">Volver al listado</Link>
+                    <Link to={backPath}>Volver</Link>
                 </Button>
             </section>
         );
     }
 
+    if (!canViewEmployee) {
+        return <Navigate to="/unauthorized" replace />;
+    }
     return (
         <section className="space-y-6">
             <Button asChild variant="outline">
-                <Link to="/empleados">Volver</Link>
+                <Link to={backPath}>Volver</Link>
             </Button>
 
             <PageHeader

@@ -79,7 +79,7 @@ export async function updateEmployeeStatus(id, activo) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({activo}),
+            body: JSON.stringify({ activo }),
         });
 
         if (!response.ok) {
@@ -96,15 +96,25 @@ export async function updateEmployeeStatus(id, activo) {
     }
 }
 
-export async function getUsers() {
+export async function getUsers(rol) {
     try {
-        const response = await fetch(`${API_URL}/usuarios`)
+        const query = rol
+            ? `?rol=${encodeURIComponent(rol)}` // Lllamar solo usuarios con rol de empleado
+            : "";
+
+        const response = await fetch(
+            `${API_URL}/usuarios${query}`
+        );
+
         if (!response.ok) {
             throw new Error();
         }
+
         return await response.json();
     } catch {
-        throw new Error("No se pudieron cargar los usuarios");
+        throw new Error(
+            "No se pudieron cargar los usuarios"
+        );
     }
 }
 

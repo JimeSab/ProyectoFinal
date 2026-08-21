@@ -11,6 +11,8 @@ export function Navbar() {
 
     const isAdmin = user?.rol?.nombre === "Administrador";
 
+    const isEmployee = user?.rol?.nombre === "Empleado";
+
     function handleLogout() {
         logout();
         navigate("/", { replace: true });
@@ -34,9 +36,31 @@ export function Navbar() {
                         Adicionales
                     </Link>
 
+                    <Link to="/horarios" className="text-black hover:text-white transition-colors">
+                        Horarios
+                    </Link>
+
+                    {isAuthenticated && (isAdmin || isEmployee) && (
+                        <Link
+                            to="/restricciones"
+                            className="text-black hover:text-white transition-colors"
+                        >
+                            Restricciones
+                        </Link>
+                    )}
+
                     {isAuthenticated && isAdmin && (
                         <Link to="/empleados" className="text-black hover:text-white transition-colors">
                             Empleados
+                        </Link>
+                    )}
+
+                    {isAuthenticated && isEmployee && user?.empleado?.id && (
+                        <Link
+                            to={`/empleados/${user.empleado.id}`}
+                            className="text-black hover:text-white transition-colors"
+                        >
+                            Mi agenda
                         </Link>
                     )}
 

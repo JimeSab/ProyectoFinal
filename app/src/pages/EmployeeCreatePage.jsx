@@ -22,12 +22,19 @@ export function EmployeeCreatePage() {
             try {
                 setLoading(true);
                 const [usersData, specialtiesData, servicesData] = await Promise.all([
-                    getUsers(),
+                    getUsers("Empleado"),
                     getSpecialties(),
                     getServices(),
                 ]);
 
-                setUsers(usersData.data.filter((item) => item.activo));
+                setUsers(
+                    usersData.data.filter(
+                        (item) =>
+                            item.activo &&
+                            item.rol?.nombre === "Empleado" &&
+                            !item.empleado
+                    )
+                );
                 setSpecialties(specialtiesData.data.filter((item) => item.activo));
                 setServices(servicesData.data.filter((item) => item.activo));
             } catch (requestError) {

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { PageHeader } from "@/components/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { EmployeeForm } from "@/components/EmployeeForm";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 import {
     getEmployeeById,
@@ -33,13 +32,23 @@ export function EmployeeEditPage() {
 
                 const [employeeData, usersData, specialtiesData, servicesData] = await Promise.all([
                     getEmployeeById(id),
-                    getUsers(),
+                    getUsers("Empleado"),
                     getSpecialties(),
                     getServices(),
                 ]);
 
                 setEmployee(employeeData.data);
-                setUsers(usersData.data.filter((item) => item.activo));
+                setUsers(
+                    usersData.data.filter(
+                        (item) =>
+                            item.activo &&
+                            item.rol?.nombre === "Empleado" &&
+                            (
+                                !item.empleado ||
+                                item.id === employeeData.data.usuarioId
+                            )
+                    )
+                );
                 setSpecialties(specialtiesData.data.filter((item) => item.activo));
                 setServices(servicesData.data.filter((item) => item.activo));
             } catch (requestError) {
