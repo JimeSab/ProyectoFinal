@@ -155,3 +155,31 @@ export async function getEmployeeAgenda(id, fecha) {
         throw new Error("No se pudo cargar la agenda del empleado.");
     }
 }
+
+/*
+Usa servicio seleccionado para obtener solo
+los empleados activos que pueden hacer ese servicio
+*/
+export async function getActiveEmployees(serviceId) {
+    try {
+        const response = await fetch(
+            `${API_URL}/empleados/activos?servicioId=${encodeURIComponent(serviceId)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "No se pudieron cargar los empleados activos."
+            );
+        }
+
+        return data;
+    } catch (error) {
+        throw new Error(
+            error.message ||
+            "No se pudieron cargar los empleados activos."
+        );
+    }
+}

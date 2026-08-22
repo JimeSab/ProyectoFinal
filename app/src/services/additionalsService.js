@@ -92,3 +92,15 @@ export async function updateAdditionalStatus(id, activo) {
         "No se pudo cambiar el estado del servicio adicional."
     );
 }
+
+/*
+Usa GET para obtener SOLO  adicionales activos
+que pueden agregarse a una cita.
+*/
+export async function getActiveAdditionals() {
+    return request(
+        "/servicios-adicionales/activos",
+        undefined,
+        "No se pudieron cargar los servicios adicionales activos."
+    );
+}

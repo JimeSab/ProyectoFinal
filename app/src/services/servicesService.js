@@ -152,3 +152,31 @@ export async function updateServiceStatus(id, activo) {
         );
     }
 }
+
+/*
+Usa GET para obtener SOLO los servicios activos
+que pueden seleccionarse al crear una cita.
+*/
+export async function getActiveServices() {
+    try {
+        const response = await fetch(
+            `${API_URL}/servicios/activos`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "No se pudieron cargar los servicios activos."
+            );
+        }
+
+        return data;
+    } catch (error) {
+        throw new Error(
+            error.message ||
+            "No se pudieron cargar los servicios activos."
+        );
+    }
+}
