@@ -8,6 +8,7 @@ import {
     getLocalToday,
 } from "../lib/appointmentUtils";
 import { FormError } from "./FormError";
+import { AppointmentAgenda } from "./AppointmentAgenda";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -71,14 +72,14 @@ export function AppointmentForm({
     });
 
     const serviceId = watch("servicioId");
+    const employeeId = watch("empleadoId");
+const appointmentDate = watch("fecha");
     const startTime = watch("horaInicio");
     const additionalIds =
         watch("adicionalIds") || [];
 
-    /*
-    Busca el servicio seleccionado para obtener
-    su duración y precio.
-    */
+    /*Busca el servicio seleccionado para obtener
+    su duración y precio.*/
 
     const selectedService = services.find(
         (service) =>
@@ -362,7 +363,14 @@ export function AppointmentForm({
                                 readOnly
                             />
                         </div>
-
+                        
+{/* Muestra la agenda del empleado seleccionado. */}
+<div className="md:col-span-2">
+    <AppointmentAgenda
+        employeeId={employeeId}
+        date={appointmentDate}
+    />
+</div>
                         {/* Selecciona los adicionales. */}
 
                         <div className="md:col-span-2">
@@ -448,7 +456,7 @@ export function AppointmentForm({
                         </div>
 
                         {/* Muestra duración y costos calculados. */}
-                        
+
                         <div className="grid gap-2 rounded-md border p-4 md:col-span-2">
                             <p>
                                 Duración:{" "}
