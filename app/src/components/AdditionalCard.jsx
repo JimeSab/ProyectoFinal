@@ -13,10 +13,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-/*
-Muestra la información de un servicio adicional usando una tarjeta
-de shadcn para reutilizar el mismo diseño en todos los registros del listado.
-*/
+/*Muestra información de un servicio adicional usando una tarjeta 
+de shadcn para reutilizar el mismo diseño en todos los registros del listado.*/
 export function AdditionalCard({
     additional,
     onRequestStatusChange,
@@ -28,10 +26,8 @@ export function AdditionalCard({
     return (
         <Card className="h-full">
 
-            {/*
-            Muestra el nombre y utiliza Badge para representar visualmente
-            si el servicio adicional está activo o inactivo.
-            */}
+{/* Muestra nombre y utiliza Badge para enseñar si el servicio adicional está activo o inactivo */}
+
             <CardHeader className="grid grid-cols-[1fr_auto] items-start gap-3">
                 <CardTitle>{additional.nombre}</CardTitle>
 
@@ -47,10 +43,9 @@ export function AdditionalCard({
                 </Badge>
             </CardHeader>
 
-            {/*
-            Muestra la descripción y convierte el precio usando Number
-            para después presentarlo con el formato de moneda de Costa Rica.
+{/*Muestra descripción y convierte el precio usando Number para después presentarlo con el formato de moneda de Costa Rica.
             */}
+
             <CardContent className="grid flex-1 gap-3">
                 <p className="text-sm text-muted-foreground">
                     {additional.descripcion}
