@@ -32,10 +32,16 @@ import { EmployeeDetailPage } from "./pages/EmployeeDetailPage";
 import { SchedulesPage } from "./pages/SchedulesPage";
 import { ScheduleDetailPage } from "./pages/ScheduleDetailPage";
 
-/*
-Muestra la página 404 cuando el usuario intenta entrar
-en una dirección que no está registrada en Routes.
-*/
+import { AppointmentsPage } from "./pages/AppointmentsPage";
+import { AppointmentCreatePage } from "./pages/AppointmentCreatePage";
+import { AppointmentDetailPage } from "./pages/AppointmentDetailPage";
+import { AppointmentEditPage } from "./pages/AppoinmentEditPage";
+import { AppointmentStatusPage } from "./pages/AppointmentStatusPage";
+import { AgendaEmployeePage } from "./pages/AgendaEmployeePage";
+import { AgendaDailyPage } from "./pages/AgendaDailyPage";
+
+/*Muestra la página 404 cuando el usuario intenta entrar
+en una dirección que no está registrada en Routes*/
 function NotFoundPage() {
     return (
         <section>
@@ -214,6 +220,117 @@ export default function App() {
                             </ProtectedRoute>
                         }
                     />
+
+{/* Citas */}
+<Route
+    path="/citas"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                    "Empleado",
+                    "Cliente",
+                ]}
+            >
+                <AppointmentsPage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/citas/nueva"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                    "Empleado",
+                ]}
+            >
+                <AppointmentCreatePage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/citas/:id"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                    "Empleado",
+                    "Cliente",
+                ]}
+            >
+                <AppointmentDetailPage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/citas/:id/editar"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                    "Empleado",
+                ]}
+            >
+                <AppointmentEditPage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/citas/:id/estado"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                    "Empleado",
+                ]}
+            >
+                <AppointmentStatusPage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/mi-agenda"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={["Empleado"]}
+            >
+                <AgendaEmployeePage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/agenda-diaria"
+    element={
+        <ProtectedRoute>
+            <RoleRoute
+                allowedRoles={[
+                    "Administrador",
+                ]}
+            >
+                <AgendaDailyPage />
+            </RoleRoute>
+        </ProtectedRoute>
+    }
+/>
 
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

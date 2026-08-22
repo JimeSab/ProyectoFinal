@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import {
     Link,
+    Navigate,
     useNavigate,
     useParams,
 } from "react-router-dom";
 
+import { useAuth } from "@/auth/useAuth";
 import { PageHeader } from "@/components/PageHeader";
 import {
     Alert,
@@ -28,6 +30,7 @@ import {
 export function AppointmentStatusPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [appointment, setAppointment] =
         useState(null);
@@ -37,10 +40,8 @@ export function AppointmentStatusPage() {
         useState(true);
     const [error, setError] = useState("");
 
-    /*
-    Carga la cita y los estados disponibles.
-    */
-   
+    /*Carga la cita y los estados disponibles.*/
+
     useEffect(() => {
         async function loadStatusData() {
             try {
@@ -125,6 +126,22 @@ export function AppointmentStatusPage() {
             </Alert>
         );
     }
+
+/*Comprueba que el empleado solamente pueda cambiar
+el estado de las citas que tiene asignadas*/
+const employeeCannotChangeStatus =
+    user?.rol?.nombre === "Empleado" &&
+    String(user?.empleado?.id) !==
+        String(appointment.empleadoId);
+
+if (employeeCannotChangeStatus) {
+    return (
+        <Navigate
+            to="/unauthorized"
+            replace
+        />
+    );
+}
 
     return (
         <section className="space-y-6">

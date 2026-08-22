@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import {
+    Link,
+    Navigate,
+    useParams,
+} from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 import { useAuth } from "@/auth/useAuth";
@@ -146,6 +150,20 @@ export function AppointmentDetailPage() {
     const clientOwnsAppointment =
         role === "Cliente" &&
         user?.id === appointment.clienteId;
+
+        const canView =
+    role === "Administrador" ||
+    employeeOwnsAppointment ||
+    clientOwnsAppointment;
+
+if (!canView) {
+    return (
+        <Navigate
+            to="/unauthorized"
+            replace
+        />
+    );
+}
 
     const canManage =
         role === "Administrador" ||

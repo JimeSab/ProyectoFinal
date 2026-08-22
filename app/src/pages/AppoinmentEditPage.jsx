@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+
 import {
+    Navigate,
     useNavigate,
     useParams,
 } from "react-router-dom";
 
+import { useAuth } from "@/auth/useAuth";
 import { AppointmentForm } from "@/components/AppointmentForm";
 import { PageHeader } from "@/components/PageHeader";
 import {
@@ -24,6 +27,7 @@ import { getActiveEmployees } from "@/services/employeesService";
 export function AppointmentEditPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [appointment, setAppointment] =
         useState(null);
@@ -196,6 +200,20 @@ export function AppointmentEditPage() {
             </Alert>
         );
     }
+
+const employeeCannotEdit =
+    user?.rol?.nombre === "Empleado" &&
+    user?.empleado?.id !==
+        appointment.empleadoId;
+
+if (employeeCannotEdit) {
+    return (
+        <Navigate
+            to="/unauthorized"
+            replace
+        />
+    );
+}
 
     return (
         <section className="space-y-6">

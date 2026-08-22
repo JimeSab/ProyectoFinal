@@ -40,6 +40,17 @@ export function Navbar() {
                         Horarios
                     </Link>
 
+    {isAuthenticated && (
+    <Link
+        to="/citas"
+        className="text-black hover:text-white transition-colors"
+    >
+        {user?.rol?.nombre === "Cliente"
+            ? "Mis citas"
+            : "Citas"}
+    </Link>
+)}
+
                     {isAuthenticated && (isAdmin || isEmployee) && (
                         <Link
                             to="/restricciones"
@@ -54,10 +65,19 @@ export function Navbar() {
                             Empleados
                         </Link>
                     )}
+                    
+                    {isAuthenticated && isAdmin && (
+    <Link
+        to="/agenda-diaria"
+        className="text-black hover:text-white transition-colors"
+    >
+        Agenda diaria
+    </Link>
+)}
 
                     {isAuthenticated && isEmployee && user?.empleado?.id && (
                         <Link
-                            to={`/empleados/${user.empleado.id}`}
+                            to="/mi-agenda"
                             className="text-black hover:text-white transition-colors"
                         >
                             Mi agenda

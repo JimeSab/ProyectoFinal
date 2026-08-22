@@ -37,7 +37,7 @@ export function AppointmentCreatePage() {
     /*
     Carga los datos necesarios para el formulario.
     */
-   
+
     useEffect(() => {
         async function loadFormData() {
             try {
@@ -101,11 +101,24 @@ export function AppointmentCreatePage() {
             setError("");
 
             const response =
-                await getActiveEmployees(serviceId);
+    await getActiveEmployees(serviceId);
 
-            setEmployees(
-                response.data || response
-            );
+const employeeList =
+    response.data || response;
+
+/*Si ingresó un empleado, solamente puede
+seleccionarse a sí mismo.*/
+if (user?.rol?.nombre === "Empleado") {
+    setEmployees(
+        employeeList.filter(
+            (employee) =>
+                String(employee.id) ===
+                String(user?.empleado?.id)
+        )
+    );
+} else {
+    setEmployees(employeeList);
+}
         } catch (requestError) {
             setError(requestError.message);
         }
