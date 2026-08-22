@@ -31,6 +31,7 @@ import {
 } from "@/schemas/appointmentSchema";
 import {
     formatAppointmentDate,
+    formatAppointmentTime,
 } from "@/lib/appointmentUtils";
 
 export function AppointmentDetailPage() {
@@ -238,9 +239,14 @@ if (!canView) {
                     </p>
 
                     <p>
-                        <strong>Horario:</strong>{" "}
-                        {appointment.horaInicio} -{" "}
-                        {appointment.horaFin}
+                <strong>Horario:</strong>{" "}
+            {formatAppointmentTime(
+        appointment.horaInicio
+    )}{" "}
+    -{" "}
+    {formatAppointmentTime(
+        appointment.horaFin
+    )}
                     </p>
 
                     <p>

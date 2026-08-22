@@ -59,3 +59,17 @@ export function formatAppointmentDate(date) {
         `${dateValue}T00:00:00`
     ).toLocaleDateString("es-CR");
 }
+
+/*Muestra la hora recibida del API utilizando el formato HH:mm. */
+
+export function formatAppointmentTime(time) {
+    if (!time) {
+        return "No disponible";
+    }
+
+    if (time.includes("T")) {
+        return time.slice(11, 16);
+    }
+
+    return time.slice(0, 5);
+}

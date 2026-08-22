@@ -16,6 +16,10 @@ import {
     getAppointmentEmployeeAgenda,
 } from "@/services/appointmentsService";
 
+import {
+    formatAppointmentTime,
+} from "@/lib/appointmentUtils";
+
 export function AppointmentAgenda({
     employeeId,
     date,
@@ -112,11 +116,14 @@ export function AppointmentAgenda({
                         agenda.horarios.map(
                             (schedule) => (
                                 <p key={schedule.id}>
-                                    {
-                                        schedule.horaInicio
-                                    }{" "}
-                                    - {schedule.horaFin}
-                                </p>
+    {formatAppointmentTime(
+        schedule.horaInicio
+    )}{" "}
+    -{" "}
+    {formatAppointmentTime(
+        schedule.horaFin
+    )}
+</p>
                             )
                         )
                     )}
@@ -146,10 +153,14 @@ export function AppointmentAgenda({
                                     </p>
 
                                     <p>
-                                        {restriction.todoElDia
-                                            ? "Todo el día"
-                                            : `${restriction.horaInicio} - ${restriction.horaFin}`}
-                                    </p>
+    {restriction.todoElDia
+        ? "Todo el día"
+        : `${formatAppointmentTime(
+            restriction.horaInicio
+        )} - ${formatAppointmentTime(
+            restriction.horaFin
+        )}`}
+</p>
                                 </div>
                             )
                         )
@@ -157,7 +168,7 @@ export function AppointmentAgenda({
                 </div>
 
                 {/* Muestra las citas existentes */}
-                
+
                 <div>
                     <h3 className="font-semibold">
                         Citas registradas
@@ -183,14 +194,14 @@ export function AppointmentAgenda({
                                     </p>
 
                                     <p>
-                                        {
-                                            appointment.horaInicio
-                                        }{" "}
-                                        -{" "}
-                                        {
-                                            appointment.horaFin
-                                        }
-                                    </p>
+    {formatAppointmentTime(
+        appointment.horaInicio
+    )}{" "}
+    -{" "}
+    {formatAppointmentTime(
+        appointment.horaFin
+    )}
+</p>
 
                                     <p>
                                         {

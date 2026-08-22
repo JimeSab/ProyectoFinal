@@ -9,7 +9,10 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/auth/useAuth";
-import { formatAppointmentDate } from "@/lib/appointmentUtils";
+import {
+    formatAppointmentDate,
+    formatAppointmentTime,
+} from "@/lib/appointmentUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -61,8 +64,13 @@ export function AppointmentCard({ appointment }) {
                 <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     <span>
-                        {appointment.horaInicio} -{" "}
-                        {appointment.horaFin}
+                    {formatAppointmentTime(
+            appointment.horaInicio
+        )}{" "}
+        -{" "}
+        {formatAppointmentTime(
+            appointment.horaFin
+        )}
                     </span>
                 </div>
 
@@ -104,7 +112,8 @@ export function AppointmentCard({ appointment }) {
 
                 {/* Administradores y empleados pueden editar. */}
                 {(role === "Administrador" ||
-                    role === "Empleado") && (
+    role === "Empleado") &&
+    appointment.estadoCita.permiteEdicion && (
                     <Button
                         asChild
                         variant="outline"
@@ -140,8 +149,9 @@ AppointmentCard.propTypes = {
         servicio: PropTypes.shape({
             nombre: PropTypes.string.isRequired,
         }).isRequired,
-        estadoCita: PropTypes.shape({
-            nombre: PropTypes.string.isRequired,
-        }).isRequired,
+       estadoCita: PropTypes.shape({
+    nombre: PropTypes.string.isRequired,
+    permiteEdicion: PropTypes.bool.isRequired,
+}).isRequired,
     }).isRequired,
 };

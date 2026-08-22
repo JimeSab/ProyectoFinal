@@ -134,6 +134,8 @@ const appointmentDate = watch("fecha");
     async function handleValidSubmit(formData) {
         const dataToSend = {
             ...formData,
+            observaciones:
+    formData.observaciones.trim() || null,
             clienteId: Number(formData.clienteId),
             servicioId: Number(formData.servicioId),
             empleadoId: Number(formData.empleadoId),
@@ -144,6 +146,7 @@ const appointmentDate = watch("fecha");
             costoTotal: totalCost,
             adicionalIds:
                 formData.adicionalIds.map(Number),
+                
         };
 
         await onSubmit(dataToSend);
@@ -363,7 +366,7 @@ const appointmentDate = watch("fecha");
                                 readOnly
                             />
                         </div>
-                        
+
 {/* Muestra la agenda del empleado seleccionado. */}
 <div className="md:col-span-2">
     <AppointmentAgenda
