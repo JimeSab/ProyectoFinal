@@ -18,6 +18,7 @@ import { getRestrictionById } from "@/services/restrictionsService";
 Convierte la fecha enviada por el API al formato día/mes/año
 para que pueda comprenderse fácilmente en la interfaz.
 */
+// Formatea la fecha de la restricción para la vista de detalle.
 function formatDate(date) {
     const [year, month, day] = date.split("T")[0].split("-");
     return `${day}/${month}/${year}`;
@@ -27,6 +28,7 @@ function formatDate(date) {
 Extrae las horas y los minutos para evitar mostrar segundos
 y otra información técnica enviada por el API.
 */
+// Extrae la hora de inicio y fin cuando la restricción es parcial.
 function formatTime(time) {
     if (!time) {
         return "";
@@ -60,6 +62,7 @@ export function RestrictionDetailPage() {
     Consulta el detalle mediante el ID y guarda los datos recibidos
     para mostrarlos dentro de la tarjeta.
     */
+    // Consulta la restricción seleccionada y sus relaciones desde el API.
     useEffect(() => {
         async function loadRestriction() {
             try {
@@ -105,6 +108,7 @@ export function RestrictionDetailPage() {
     */
     const user = restriction.empleado?.usuario;
 
+    // Determina si la restricción afecta al establecimiento o a un empleado.
     const appliesTo = user
         ? [
             user.nombre,

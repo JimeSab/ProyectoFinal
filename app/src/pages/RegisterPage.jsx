@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 export function RegisterPage() {
     const navigate = useNavigate();
 
+    // Configura el formulario y aplica las validaciones del registro público.
     const {
         register,
         handleSubmit: handleFormSubmit,
@@ -36,8 +37,11 @@ export function RegisterPage() {
         },
     });
 
+    // Envía los datos del nuevo cliente al endpoint público de registro.
     async function onSubmit(formData) {
         try {
+            // Limpia los textos antes de enviarlos y no permite elegir otro rol,
+            // porque este formulario solo crea clientes.
             await registerUser({
                 nombre: formData.nombre.trim(),
                 primerApellido: formData.primerApellido.trim(),
@@ -48,6 +52,7 @@ export function RegisterPage() {
             });
 
             toast.success("Cliente registrado correctamente.");
+            // Después del registro, dirige al cliente al inicio de sesión.
             navigate("/login", { replace: true });
         } catch (error) {
             toast.error(error.message);

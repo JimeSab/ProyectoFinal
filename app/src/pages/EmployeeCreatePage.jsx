@@ -17,6 +17,7 @@ export function EmployeeCreatePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Carga usuarios, especialidades y servicios que pueden asociarse al empleado.
     useEffect(() => {
         async function loadFormData() {
             try {
@@ -47,6 +48,7 @@ export function EmployeeCreatePage() {
         loadFormData();
     }, []);
 
+    // Crea el empleado y vuelve al listado cuando la operación termina correctamente.
     async function handleCreateEmployee(formData) {
         try {
             const response = await createEmployee(formData);

@@ -47,6 +47,7 @@ export function AdditionalDetailPage() {
     Consulta el adicional usando useEffect cuando se abre la página
     o cuando cambia el ID de la dirección.
     */
+    // Consulta el adicional indicado en la URL para mostrar su información completa.
     useEffect(() => {
         async function loadAdditional() {
             try {

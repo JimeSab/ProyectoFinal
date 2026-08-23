@@ -1,0 +1,101 @@
+-- NUEVOS INSERTS PARA CUMPLIR CON CHECKLIST
+-- ============================================================
+-- 10.1. REASIGNAR UNA CITA PARA DEJAR UN SERVICIO SIN CITAS
+-- ============================================================
+
+-- Primero ejecutar: 
+USE citas;
+
+-- Luego ejecutar:
+
+-- La cita de Pedicure SPA se reasigna a Esmaltado Regular.
+-- Así se conserva la cantidad total de citas.
+
+UPDATE citas
+SET servicioId = (SELECT id FROM servicios WHERE nombre = 'Esmaltado Regular'),
+    horaInicio = '13:00:00',
+    horaFin = '14:00:00',
+    duracionMinutos = 60,
+    precioServicio = 7500.00,
+    costoTotal = 7500.00 + costoAdicionales
+WHERE servicioId = (SELECT id FROM servicios WHERE nombre = 'Pedicure SPA')
+	AND empleadoId = (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-003')
+    AND fecha = '2026-08-19'
+    AND horaInicio = '13:00:00';
+
+-- Luego ejecutar este: 
+UPDATE citas
+SET observaciones = 'Esmaltado regular.'
+WHERE id = 6;
+
+-- ============================================================
+-- 5.1. EMPLEADO ADICIONAL PARA LA DEMOSTRACIÓN
+-- ============================================================
+
+-- Ejecutar todo esto junto
+
+INSERT INTO usuarios
+(nombre, primerApellido, segundoApellido, correo, telefono, passwordHash, activo, rolId, creadoEn, actualizadoEn)
+VALUES
+('Natalia', 'Pérez', NULL, 'natalia@gmail.com', '88880006', '$2b$10$qVdw.iulSmoezMbFPOZGduq/YUL1rulGfeiN5RqSQtCfgKzKGMD7a', 1,
+    (SELECT id FROM roles WHERE nombre = 'Empleado'),
+    NOW(), NOW()
+);
+
+INSERT INTO empleados
+(usuarioId, especialidadId, codigoEmpleado, descripcion, activo, creadoEn, actualizadoEn)
+VALUES
+((SELECT id FROM usuarios WHERE correo = 'natalia@gmail.com'),
+    (SELECT id FROM especialidades WHERE nombre = 'Manicure'),
+    'EMP-004', 'Especialista en servicios de manicure.', 1, NOW(), NOW());
+
+INSERT INTO _empleadoServicios (A, B)
+VALUES
+((SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-004'),
+    (SELECT id FROM servicios WHERE nombre = 'Pedicure SPA'));
+    
+
+-- ============================================================
+-- 10.2. CITA EDITABLE CON SERVICIO ADICIONAL
+-- ============================================================
+
+-- Ejecutar todo esto junto
+
+INSERT INTO citas
+(clienteId, empleadoId, servicioId, estadoCitaId, creadoPorUsuarioId, fecha, horaInicio, horaFin, duracionMinutos, precioServicio,
+costoAdicionales, costoTotal, observaciones, motivoCancelacion, creadoEn, actualizadoEn)
+VALUES
+((SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com'),
+    (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001'),
+    (SELECT id FROM servicios WHERE nombre = 'Manicure Normal'),
+    (SELECT id FROM estados_cita WHERE nombre = 'Pendiente'),
+    (SELECT id FROM usuarios WHERE correo = 'admin@citas.com'),
+    '2026-09-22',
+    '09:00:00',
+    '10:00:00',
+    60,
+    12500.00,
+    13500.00,
+    26000.00,
+    'Cita editable con servicio adicional.',
+    NULL,
+    NOW(),
+    NOW()
+);
+
+INSERT INTO _CitaAdicionales (A, B)
+VALUES
+((SELECT id FROM citas WHERE clienteId =
+	(SELECT id FROM usuarios WHERE correo = 'sofia@gmail.com')
+          AND empleadoId = (SELECT id FROM empleados WHERE codigoEmpleado = 'EMP-001')
+          AND fecha = '2026-09-22'
+          AND horaInicio = '09:00:00'
+        ORDER BY id DESC
+        LIMIT 1
+    ),
+    (
+        SELECT id
+        FROM servicios_adicionales
+        WHERE nombre = 'Esmaltado con Calcio'
+    )
+);

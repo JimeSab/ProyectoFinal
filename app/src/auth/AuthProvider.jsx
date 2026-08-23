@@ -16,6 +16,7 @@ export function AuthProvider({ children }) {
     const [token, setToken] = useState(null)
     const [loading, setLoading] = useState(true)
     
+    // Elimina el token y los datos del usuario para cerrar completamente la sesión.
     const clearSession = useCallback(() => {
         localStorage.removeItem(TOKEN_KEY)
         setToken(null)
@@ -25,6 +26,8 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         let isMounted = true
 
+        // Recupera la sesión guardada después de recargar la página
+        // y consulta nuevamente el perfil del usuario.
         async function restoreSession() {
             const storedToken = localStorage.getItem(TOKEN_KEY)
 
@@ -35,6 +38,7 @@ export function AuthProvider({ children }) {
                 return
             }
             try {
+                // Verifica que el token almacenado todavía sea válido.
                 const response = await getProfile(storedToken)
                 const profile = response.data ?? response
 
@@ -66,6 +70,7 @@ export function AuthProvider({ children }) {
         }
     }, [clearSession])
 
+    // Autentica al usuario, obtiene su token y carga su perfil completo.
     const login = useCallback(async (credentials) => {
         const loginResponse = await loginUser(credentials)
         console.log("loginResponse", loginResponse)
@@ -78,6 +83,7 @@ export function AuthProvider({ children }) {
             )
         }
 
+        // Consulta el perfil para conocer el rol y los datos del usuario autenticado.
         const profileResponse = await getProfile(newToken)
         const profile =
             profileResponse.data ?? profileResponse
@@ -89,6 +95,7 @@ export function AuthProvider({ children }) {
         return profile
     }, [])
 
+    // Expone la función de cierre de sesión para los componentes de la aplicación.
     const logout = useCallback(() => {
         clearSession()
     }, [clearSession])

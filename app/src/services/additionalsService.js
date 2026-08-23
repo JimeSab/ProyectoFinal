@@ -2,6 +2,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Realiza las solicitudes al API utilizando fetch y devuelve la respuesta en formato JSON
+// Centraliza las solicitudes para reutilizar el manejo de respuestas y errores.
 async function request(path, options, errorMessage) {
     try {
         const response = await fetch(`${API_URL}${path}`, options);
@@ -32,6 +33,7 @@ async function request(path, options, errorMessage) {
 }
 
 // Lista todos los servicios adicionales utilizando el método GET
+// Obtiene todos los servicios adicionales registrados.
 export async function getAdditionals() {
     return request(
         "/servicios-adicionales",
@@ -41,6 +43,7 @@ export async function getAdditionals() {
 }
 
 // Obtiene el detalle de un servicio adicional usando su ID y método GET
+// Obtiene el detalle de un servicio adicional.
 export async function getAdditionalById(id) {
     return request(
         `/servicios-adicionales/${id}`,
@@ -49,6 +52,7 @@ export async function getAdditionalById(id) {
     );
 }
 // Crea un servicio adicional  método POST y envia los datos en formato JSON
+// Crea un servicio adicional con los datos del formulario.
 export async function createAdditional(additionalData) {
     return request(
         "/servicios-adicionales",
@@ -64,6 +68,7 @@ export async function createAdditional(additionalData) {
 }
 
 // Edita un servicio adicional usando su ID, el método PUT y los datos del formulario.
+// Actualiza la información editable de un servicio adicional.
 export async function updateAdditional(id, additionalData) {
     return request(
         `/servicios-adicionales/${id}`,
@@ -79,6 +84,7 @@ export async function updateAdditional(id, additionalData) {
 }
 
 // Activa / desactiva un servicio adicional usando PATCH y enviando el estado como true o false
+// Activa o desactiva un adicional sin modificar sus demás datos.
 export async function updateAdditionalStatus(id, activo) {
     return request(
         `/servicios-adicionales/${id}/estado`,
@@ -97,6 +103,7 @@ export async function updateAdditionalStatus(id, activo) {
 Usa GET para obtener SOLO  adicionales activos
 que pueden agregarse a una cita.
 */
+// Obtiene los adicionales que pueden seleccionarse en una cita nueva.
 export async function getActiveAdditionals() {
     return request(
         "/servicios-adicionales/activos",

@@ -13,84 +13,97 @@ export function Navbar() {
 
     const isEmployee = user?.rol?.nombre === "Empleado";
 
+    // Cambia el estilo del enlace según la página que está activa.
+    const linkClass = ({ isActive }) =>
+        isActive
+            ? "rounded-full bg-[#D98989] px-3 py-1.5 text-sm font-semibold text-white transition-colors"
+            : "rounded-full px-3 py-1.5 text-sm text-black transition-colors hover:bg-[#D98989] hover:text-white";
+
+    // Cierra la sesión y regresa al inicio para evitar volver a una vista protegida.
     function handleLogout() {
         logout();
         navigate("/", { replace: true });
     }
 
     return (
-        <header className="w-full bg-[#F5AFAF] py-0.75">
-            <nav className="flex min-h-22.5 items-center justify-between px-8">
-                <img src={logo} alt="Rose Glow" className="w-45 h-auto" />
+        <header className="sticky top-0 z-50 w-full bg-[#F5AFAF] py-0.75 shadow-sm">
+            <nav className="flex min-h-20 items-center justify-between px-4">
+                <Link to="/">
+                    <img
+                        src={logo}
+                        alt="Rose Glow"
+                        className="w-36 h-auto"
+                    />
+                </Link>
 
-                <div className="flex items-center gap-8">
-                    <Link to="/" className="text-black hover:text-white transition-colors">
+                <div className="flex items-center gap-3">
+                    <NavLink to="/" className={linkClass}>
                         Inicio
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/servicios" className="text-black hover:text-white transition-colors">
+                    <NavLink to="/servicios" className={linkClass}>
                         Servicios
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/adicionales" className="text-black hover:text-white transition-colors">
+                    <NavLink to="/adicionales" className={linkClass}>
                         Adicionales
-                    </Link>
+                    </NavLink>
 
-                    <Link to="/horarios" className="text-black hover:text-white transition-colors">
+                    <NavLink to="/horarios" className={linkClass}>
                         Horarios
-                    </Link>
+                    </NavLink>
 
-    {isAuthenticated && (
-    <Link
-        to="/citas"
-        className="text-black hover:text-white transition-colors"
-    >
-        {user?.rol?.nombre === "Cliente"
-            ? "Mis citas"
-            : "Citas"}
-    </Link>
-)}
+                    {isAuthenticated && (
+                        <NavLink
+                            to="/citas"
+                            className={linkClass}
+                        >
+                            {user?.rol?.nombre === "Cliente"
+                                ? "Mis citas"
+                                : "Citas"}
+                        </NavLink>
+                    )}
 
                     {isAuthenticated && (isAdmin || isEmployee) && (
-                        <Link
+                        <NavLink
                             to="/restricciones"
-                            className="text-black hover:text-white transition-colors"
+                            className={linkClass}
                         >
                             Restricciones
-                        </Link>
+                        </NavLink>
                     )}
 
                     {isAuthenticated && isAdmin && (
-                        <Link to="/empleados" className="text-black hover:text-white transition-colors">
+                        <NavLink to="/empleados" className={linkClass}>
                             Empleados
-                        </Link>
+                        </NavLink>
                     )}
-                    
+
                     {isAuthenticated && isAdmin && (
-    <Link
-        to="/agenda-diaria"
-        className="text-black hover:text-white transition-colors"
-    >
-        Agenda diaria
-    </Link>
-)}
+                        <NavLink
+                            to="/agenda-diaria"
+                            className={linkClass}
+                        >
+                            Agenda diaria
+                        </NavLink>
+                    )}
 
                     {isAuthenticated && isEmployee && user?.empleado?.id && (
-                        <Link
+                        <NavLink
                             to="/mi-agenda"
-                            className="text-black hover:text-white transition-colors"
+                            className={linkClass}
                         >
                             Mi agenda
-                        </Link>
+                        </NavLink>
                     )}
 
                     {!isAuthenticated ? (
-                        <Link to="/login" className="text-black hover:text-white transition-colors">
+                        <NavLink to="/login" className={linkClass}>
                             Ingresar
-                        </Link>
+                        </NavLink>
                     ) : (
                         <>
-                            <NavLink to="/perfil" className="text-black hover:text-white transition-colors flex items-center gap-1">
+                            <NavLink to="/perfil" className={linkClass}>
                                 <UserRound className="h-4 w-4" />
                                 {user?.nombre || "Perfil"}
                             </NavLink>

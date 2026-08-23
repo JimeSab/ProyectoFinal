@@ -19,11 +19,13 @@ export function ServiceCard({
 }) {
     const { isAuthenticated, user } = useAuth();
 
+    // Solo el administrador puede cambiar el estado del servicio.
     const isAdmin =
         user?.rol?.nombre === "Administrador";
 
     const API_URL = import.meta.env.VITE_API_URL;
 
+    // Presenta la información resumida y las acciones disponibles del servicio.
     return (
         <Card className="overflow-hidden">
             <div className="h-64 overflow-hidden">
@@ -61,11 +63,12 @@ export function ServiceCard({
                 <Button
                     asChild
                     variant="ghost"
-                    className="w-full group/btn hover:bg-accent hover:text-accent-foreground transition-all duration-300 bg-[#F9DFDF]"
+                    className="w-full group/btn bg-[#F9DFDF] text-black hover:bg-[#F9DFDF] hover:text-black transition-all duration-300"
                 >
                     <Link to={`/servicios/${service.id}`}>
                         <span className="font-semibold">Ver detalles</span>
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5 bg-[#F9DFDF]" />
+
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                     </Link>
                 </Button>
 

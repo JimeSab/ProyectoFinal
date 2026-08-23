@@ -23,6 +23,7 @@ export function AdditionalCreatePage() {
     Crea el servicio adicional usando createAdditional y los datos
     recibidos desde AdditionalForm.
     */
+    // Crea el adicional y regresa al listado cuando el API confirma la operación.
     async function handleCreate(formData) {
         try {
             // Elimina cualquier mensaje de error anterior.

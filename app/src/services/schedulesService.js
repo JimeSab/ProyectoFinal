@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Obtiene los horarios generales registrados, sin permitir modificaciones.
 export async function getSchedules() {
     try {
         const response = await fetch(`${API_URL}/horarios-atencion`);
@@ -14,6 +15,7 @@ export async function getSchedules() {
     }
 }
 
+// Obtiene el detalle de un horario específico.
 export async function getScheduleById(id) {
     try {
         const response = await fetch(`${API_URL}/horarios-atencion/${id}`);

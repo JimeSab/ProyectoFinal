@@ -57,6 +57,7 @@ export function ServiceForm({
         },
     });
 
+    // Genera una vista previa local de la imagen antes de enviarla al API.
     function handleImageChange(service) {
         const file = service.target.files?.[0]
         if (!file) {
@@ -67,6 +68,7 @@ export function ServiceForm({
         setImagePreview(previewURL)
     }
 
+    // Sube la imagen, convierte los valores numéricos y prepara los datos del servicio.
     async function handleValidSubmit(formData) {
         const file = formData.imagen?.[0];
 

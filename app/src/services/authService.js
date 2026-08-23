@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL
 
+// Envía el correo y la contraseña al endpoint de autenticación.
 export async function loginUser(credentials) {
     try {
         const response = await fetch(`${API_URL}/usuarios/login`, {
@@ -18,6 +19,7 @@ export async function loginUser(credentials) {
     }
 }
 
+// Registra públicamente una cuenta con rol Cliente.
 export async function registerUser(userData) {
     try {
         const response = await fetch(`${API_URL}/usuarios/registro`, {
@@ -37,6 +39,7 @@ export async function registerUser(userData) {
     }
 }
 
+// Consulta el perfil del usuario autenticado usando su token.
 export async function getProfile(token) {
     try {
         const response = await fetch(`${API_URL}/usuarios/perfil`, {
@@ -45,6 +48,7 @@ export async function getProfile(token) {
                 Authorization: `Bearer ${token}`
             }
         })
+        // Si el token ya no es válido, la sesión debe considerarse cerrada.
         if (!response.ok) {
             throw new Error("Token inválido o expirado.")
         }

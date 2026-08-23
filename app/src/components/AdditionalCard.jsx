@@ -21,12 +21,14 @@ export function AdditionalCard({
     changingStatus = false,
 }) {
     const { isAuthenticated, user } = useAuth();
+    // Las acciones de mantenimiento solo están disponibles para el administrador.
     const isAdmin = user?.rol?.nombre === "Administrador";
-    
+
+    // Muestra el precio, estado y enlaces del servicio adicional.
     return (
         <Card className="h-full">
 
-{/* Muestra nombre y utiliza Badge para enseñar si el servicio adicional está activo o inactivo */}
+            {/* Muestra nombre y utiliza Badge para enseñar si el servicio adicional está activo o inactivo */}
 
             <CardHeader className="grid grid-cols-[1fr_auto] items-start gap-3">
                 <CardTitle>{additional.nombre}</CardTitle>
@@ -43,7 +45,7 @@ export function AdditionalCard({
                 </Badge>
             </CardHeader>
 
-{/*Muestra descripción y convierte el precio usando Number para después presentarlo con el formato de moneda de Costa Rica.
+            {/*Muestra descripción y convierte el precio usando Number para después presentarlo con el formato de moneda de Costa Rica.
             */}
 
             <CardContent className="grid flex-1 gap-3">
@@ -63,10 +65,15 @@ export function AdditionalCard({
                 Utiliza Link con el ID del adicional para navegar
                 a la página que mostrará la información completa.
                 */}
-                <Button asChild variant="outline" className="flex-1">
+                <Button
+                    asChild
+                    variant="ghost"
+                    className="w-full group/btn bg-[#F9DFDF] text-black hover:bg-[#F9DFDF] hover:text-black transition-all duration-300"
+                >
                     <Link to={`/adicionales/${additional.id}`}>
-                        Detalle
-                        <ArrowRight />
+                        <span className="font-semibold">Ver detalles</span>
+
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                     </Link>
                 </Button>
 
@@ -83,7 +90,7 @@ export function AdditionalCard({
                             </Link>
                         </Button>
 
-                {/*
+                        {/*
                 Utiliza onRequestStatusChange para comunicarle al listado
                 cuál adicional se desea activar o desactivar.
                 */}

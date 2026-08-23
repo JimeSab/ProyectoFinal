@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Valida la información obligatoria y el formato del código del empleado.
 export const employeeSchema = z.object({
     usuarioId: z
         .string()

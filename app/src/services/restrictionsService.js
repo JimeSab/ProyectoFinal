@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 Esta función usa fetch para consultar todas las restricciones
 registradas en el API y enviarlas a la página del listado.
 */
+// Obtiene las restricciones para mostrarlas en el listado de consulta.
 export async function getRestrictions() {
     try {
         const response = await fetch(
@@ -34,6 +35,7 @@ export async function getRestrictions() {
 Esta función recibe un ID y lo agrega al endpoint usando fetch
 para consultar únicamente la restricción seleccionada.
 */
+// Obtiene el detalle de una restricción específica.
 export async function getRestrictionById(id) {
     try {
         const response = await fetch(

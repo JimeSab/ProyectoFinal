@@ -1,11 +1,13 @@
 import { z } from "zod";
 
+// Limita los formatos de imagen aceptados por el formulario.
 const validImageTypes = [
     "image/jpeg",
     "image/png",
     "image/webp",
 ];
 
+// Valida los campos obligatorios y los formatos permitidos para un servicio.
 export const serviceSchema = z.object({
     nombre: z
         .string()

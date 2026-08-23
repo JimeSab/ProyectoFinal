@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Valida los datos necesarios para registrar públicamente un nuevo cliente.
 export const registrationSchema = z
     .object({
         nombre: z

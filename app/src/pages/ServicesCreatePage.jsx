@@ -14,6 +14,7 @@ export function ServicesCreatePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Consulta las especialidades activas que se pueden asociar al nuevo servicio.
     useEffect(() => {
         async function loadFormData() {
             try {
@@ -30,6 +31,7 @@ export function ServicesCreatePage() {
         loadFormData();
     }, []);
 
+    // Envía el nuevo servicio al API y vuelve al listado después de guardarlo.
     async function handleCreateService(formData) {
         try {
             const newService = await createService(formData);

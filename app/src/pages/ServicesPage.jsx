@@ -17,6 +17,7 @@ export function ServicesPage() {
     const { isAuthenticated, user } = useAuth();
     const isAdmin = user?.rol?.nombre === "Administrador";
 
+    // Carga los servicios desde el API cuando se muestra el listado.
     useEffect(() => {
         async function fetchServices() {
             try {
@@ -34,6 +35,7 @@ export function ServicesPage() {
         fetchServices();
     }, []);
 
+    // Activa o desactiva un servicio y actualiza el listado después de la respuesta.
     async function handleStatusChange(service) {
         const action = service.activo
             ? "desactivar"
@@ -69,6 +71,7 @@ export function ServicesPage() {
         }
     }
 
+    // Filtra los servicios por nombre o descripción sin modificar los datos originales.
     const filteredServices = services.filter((service) =>
         service.nombre.toLowerCase().includes(search.toLowerCase())
     );

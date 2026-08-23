@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Valida que el correo y la contraseña cumplan los requisitos antes del login.
 export const loginSchema = z.object({
     correo: z
         .string()

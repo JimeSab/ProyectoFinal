@@ -41,6 +41,7 @@ export function RestrictionsPage() {
     Utiliza useEffect para ejecutar loadRestrictions una sola vez
     cuando la página se muestra por primera vez.
     */
+    // Consulta las restricciones existentes porque este módulo es de solo lectura.
     useEffect(() => {
         async function loadRestrictions() {
             try {
@@ -76,6 +77,7 @@ export function RestrictionsPage() {
     Utiliza useMemo para ordenar una copia de las restricciones sin
     modificar directamente el arreglo original guardado en el estado.
     */
+    // Ordena las restricciones por fecha sin modificar la respuesta original del API.
     const sortedRestrictions = useMemo(() => {
         return [...restrictions].sort((first, second) => {
             const comparison = first.fecha.localeCompare(second.fecha);

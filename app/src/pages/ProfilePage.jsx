@@ -23,8 +23,10 @@ export function ProfilePage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        // Carga la información real del usuario autenticado desde el API.
         async function loadProfile() {
             try {
+                // Utiliza los datos del contexto para evitar una consulta innecesaria.
                 if (sessionUser) {
                     setProfile(sessionUser);
                     return;
@@ -36,6 +38,7 @@ export function ProfilePage() {
                 }
 
                 setLoading(true);
+                // Si el contexto no tiene el perfil, lo consulta usando el token guardado.
                 const response = await getProfile(token);
                 setProfile(response.data ?? response);
             } catch {
@@ -48,6 +51,7 @@ export function ProfilePage() {
         loadProfile();
     }, [token, sessionUser]);
 
+    // Cierra la sesión y devuelve al usuario a la página principal.
     function handleLogout() {
         logout();
         navigate("/", { replace: true });

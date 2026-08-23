@@ -16,6 +16,7 @@ import {
 Recibe la fecha enviada por el API y separa el año, mes y día
 para mostrarla como día/mes/año sin alterar la zona horaria.
 */
+// Convierte la fecha de la restricción a un formato comprensible.
 function formatDate(date) {
     const [year, month, day] = date.split("T")[0].split("-");
     return `${day}/${month}/${year}`;
@@ -25,6 +26,7 @@ function formatDate(date) {
 Recibe una hora del API y extrae solamente las horas y los minutos
 para evitar mostrar segundos o información técnica innecesaria.
 */
+// Permite mostrar correctamente horas recibidas como Time o DateTime.
 function formatTime(time) {
     if (!time) {
         return "";
@@ -41,6 +43,7 @@ function formatTime(time) {
 Muestra una restricción dentro de una tarjeta reutilizable usando
 componentes de shadcn para mantener el mismo diseño en todo el listado.
 */
+// Muestra si la restricción es general o pertenece a un empleado específico.
 export function RestrictionCard({ restriction }) {
     /*
     Obtiene el usuario relacionado con el empleado usando encadenamiento
@@ -141,10 +144,10 @@ export function RestrictionCard({ restriction }) {
                 Utiliza Link con el ID de la restricción para navegar
                 a la página que mostrará toda su información.
                 */}
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="ghost" className="w-full group/btn bg-[#F9DFDF] text-black hover:bg-[#F9DFDF] hover:text-black transition-all duration-300">
                     <Link to={`/restricciones/${restriction.id}`}>
                         Ver detalle
-                        <ArrowRight />
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5"/>
                     </Link>
                 </Button>
             </CardFooter>

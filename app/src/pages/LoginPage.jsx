@@ -22,6 +22,7 @@ export function LoginPage() {
     const location = useLocation()
     const { login, isAuthenticated } = useAuth()
 
+    // Configura el formulario y conecta sus campos con el schema de Zod.
     const {
         register,
         handleSubmit: handleFormSubmit,
@@ -34,6 +35,8 @@ export function LoginPage() {
         },
     });
 
+    // Envía las credenciales al contexto de autenticación
+    // y muestra el resultado del inicio de sesión.
     async function onSubmit(formData) {
         try {
             const user = await login({
@@ -43,8 +46,10 @@ export function LoginPage() {
 
             toast.success(`Bienvenido, ${user.nombre || user.correo}.`);
 
+            // Devuelve al usuario a la página que intentó visitar antes de iniciar sesión.
             const previousRoute = location.state?.from?.pathname;
             navigate(previousRoute || "/", { replace: true });
+        // Informa mediante toast si el API rechaza las credenciales.
         } catch (error) {
             toast.error(error.message);
         }

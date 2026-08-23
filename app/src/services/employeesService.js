@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Obtiene el listado completo de empleados para el administrador.
 export async function getEmployees() {
     try {
         const response = await fetch(`${API_URL}/empleados`);
@@ -12,6 +13,7 @@ export async function getEmployees() {
     }
 }
 
+// Obtiene el detalle de un empleado, incluyendo sus servicios y citas.
 export async function getEmployeeById(id) {
     try {
         const response = await fetch(`${API_URL}/empleados/${id}`);
@@ -24,6 +26,7 @@ export async function getEmployeeById(id) {
     }
 }
 
+// Registra un empleado y sus asociaciones de servicios.
 export async function createEmployee(employeeData) {
     try {
         const response = await fetch(`${API_URL}/empleados`, {
@@ -48,6 +51,7 @@ export async function createEmployee(employeeData) {
     }
 }
 
+// Actualiza la información y los servicios asignados al empleado.
 export async function updateEmployee(id, employeeData) {
     try {
         const response = await fetch(`${API_URL}/empleados/${id}`, {
@@ -72,6 +76,7 @@ export async function updateEmployee(id, employeeData) {
     }
 }
 
+// Cambia el estado del empleado según las validaciones del API.
 export async function updateEmployeeStatus(id, activo) {
     try {
         const response = await fetch(`${API_URL}/empleados/${id}/estado`, {
@@ -96,6 +101,7 @@ export async function updateEmployeeStatus(id, activo) {
     }
 }
 
+// Consulta usuarios disponibles para asociarlos a un empleado.
 export async function getUsers(rol) {
     try {
         const query = rol
@@ -142,6 +148,7 @@ export async function getServices() {
     }
 }
 
+// Consulta la agenda y restricciones de un empleado para una fecha.
 export async function getEmployeeAgenda(id, fecha) {
     try {
         const response = await fetch(`${API_URL}/empleados/${id}/agenda?fecha=${fecha}`);
@@ -160,6 +167,7 @@ export async function getEmployeeAgenda(id, fecha) {
 Usa servicio seleccionado para obtener solo
 los empleados activos que pueden hacer ese servicio
 */
+// Obtiene empleados activos que tienen asignado el servicio seleccionado.
 export async function getActiveEmployees(serviceId) {
     try {
         const response = await fetch(

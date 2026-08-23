@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEmployeeById, getEmployeeAgenda } from "@/services/employeesService";
 import { useAuth } from "@/auth/useAuth";
 
+// Convierte la fecha recibida por el API a un formato legible para la pantalla.
 function formatDate(date) {
     if (!date) {
         return "No disponible";
@@ -19,6 +20,7 @@ function formatDate(date) {
     }).format(new Date(date));
 }
 
+// Extrae únicamente la hora y los minutos de valores DateTime o Time.
 function formatTime(value) {
     if (!value) {
         return "No disponible";
@@ -39,6 +41,7 @@ export function EmployeeDetailPage() {
     const { isAuthenticated, user } = useAuth();
     const isAdmin = user?.rol?.nombre === "Administrador";
     const isEmployee = user?.rol?.nombre === "Empleado";
+    // Un administrador puede consultar cualquier empleado; un empleado solo el suyo.
     const canViewEmployee = isAdmin || (
         isEmployee && String(user?.empleado?.id) === String(id)
     );
@@ -56,6 +59,7 @@ export function EmployeeDetailPage() {
     ? "/empleados"
     : "/";
 
+    // Carga la información general del empleado seleccionado.
     useEffect(() => {
         async function loadEmployee() {
             try {
@@ -73,6 +77,7 @@ export function EmployeeDetailPage() {
         loadEmployee();
     }, [id]);
 
+    // Consulta la agenda y las restricciones cuando cambia la fecha seleccionada.
     useEffect(() => {
         async function loadAgenda() {
             try {

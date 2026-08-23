@@ -24,6 +24,7 @@ export function ServiceDetailPage() {
     const { isAuthenticated, user } = useAuth();
     const isAdmin = user?.rol?.nombre === "Administrador";
 
+    // Consulta el servicio indicado en la URL para mostrar toda su información.
     useEffect(() => {
         async function loadService() {
             try {

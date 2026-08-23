@@ -65,6 +65,7 @@ export function AdditionalsPage() {
     Ejecuta loadAdditionals usando useEffect cuando se abre la página
     para solicitar al API la lista completa de servicios adicionales.
     */
+    // Carga los servicios adicionales y muestra mensajes enviados desde otras páginas.
     useEffect(() => {
         async function loadAdditionals() {
             try {
@@ -105,6 +106,7 @@ export function AdditionalsPage() {
     Filtra y ordena los adicionales usando useMemo para recalcular
     la lista únicamente cuando cambian los datos o la búsqueda.
     */
+    // Filtra los adicionales por nombre o descripción para facilitar la búsqueda.
     const filteredAdditionals = useMemo(() => {
         // Convierte la búsqueda a minúsculas y elimina espacios externos.
         const normalizedSearch = search.trim().toLowerCase();
@@ -140,6 +142,7 @@ export function AdditionalsPage() {
     Activa o desactiva un adicional usando updateAdditionalStatus
     y envía al API el valor contrario a su estado actual.
     */
+    // Cambia el estado del adicional y actualiza el listado después de guardar.
     async function handleStatusChange(additional) {
         const action = additional.activo
             ? "desactivar"

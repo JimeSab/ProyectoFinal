@@ -18,6 +18,7 @@ export function EmployeesPage() {
     const [error, setError] = useState("");
     const [changingId, setChangingId] = useState(null);
 
+    // Consulta los empleados y actualiza el listado cuando se carga la página.
     useEffect(() => {
         async function loadEmployees() {
             try {
@@ -35,6 +36,7 @@ export function EmployeesPage() {
         loadEmployees();
     }, []);
 
+    // Cambia el estado del empleado respetando las reglas del API sobre citas activas.
     async function handleStatusChange(employee) {
         const confirmed = window.confirm(
             `¿Desea ${employee.activo ? "desactivar" : "activar"} a ${employee.usuario?.nombre || "este empleado"}?`

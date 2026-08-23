@@ -44,6 +44,7 @@ export function AdditionalForm({
     Prepara la información usando trim para eliminar espacios innecesarios
     y Number para convertir el precio antes de enviarlo al API.
     */
+    // Limpia los textos y convierte el precio antes de enviarlo al API.
     async function handleValidSubmit(formData) {
         await onSubmit({
             nombre: formData.nombre.trim(),

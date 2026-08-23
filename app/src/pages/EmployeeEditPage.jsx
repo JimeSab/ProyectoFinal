@@ -25,6 +25,7 @@ export function EmployeeEditPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Carga el empleado y filtra los usuarios disponibles para evitar duplicar empleados.
     useEffect(() => {
         async function loadEditData() {
             try {
@@ -61,6 +62,7 @@ export function EmployeeEditPage() {
         loadEditData();
     }, [id]);
 
+    // Envía los cambios del empleado y regresa al mantenimiento principal.
     async function handleUpdateEmployee(formData) {
         try {
             const response = await updateEmployee(id, formData);

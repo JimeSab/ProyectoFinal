@@ -20,6 +20,7 @@ export function ServicesEditPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Carga el servicio seleccionado y las especialidades disponibles para editarlo.
     useEffect(() => {
         async function loadEditData() {
             try {
@@ -47,6 +48,7 @@ export function ServicesEditPage() {
         loadEditData();
     }, [id]);
 
+    // Actualiza el servicio y conserva el identificador utilizado en la ruta.
     async function handleUpdateService(formData) {
         try {
             const updatedService = await updateService(id, formData);

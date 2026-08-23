@@ -28,7 +28,7 @@ export function AppointmentsPage() {
     /*
     Carga las citas según el rol del usuario.
     */
-   
+    
     useEffect(() => {
         async function fetchAppointments() {
             try {

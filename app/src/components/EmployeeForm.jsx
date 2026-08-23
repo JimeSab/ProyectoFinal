@@ -34,8 +34,10 @@ export function EmployeeForm({
         },
     });
 
+    // Observa los servicios seleccionados para mantener sincronizadas las casillas.
     const selectedServiceIds = watch("servicioIds");
 
+    // Agrega o quita un servicio de la lista que se enviará al API.
     function toggleService(id) {
         const current = selectedServiceIds || [];
         const exists = current.includes(String(id));
@@ -47,6 +49,7 @@ export function EmployeeForm({
         setValue("servicioIds", next, { shouldValidate: true });
     }
 
+    // Convierte los identificadores a números y prepara la información del empleado.
     async function handleValidSubmit(formData) {
         await onSubmit({
             usuarioId: Number(formData.usuarioId),

@@ -45,6 +45,7 @@ export function AdditionalEditPage() {
     Consulta el adicional usando useEffect cuando se abre la página
     o cuando cambia el ID recibido desde la dirección.
     */
+    // Carga el adicional seleccionado para mostrar sus datos actuales en el formulario.
     useEffect(() => {
         async function loadAdditional() {
             try {
@@ -78,6 +79,7 @@ export function AdditionalEditPage() {
     Actualiza el adicional usando updateAdditional, el ID recibido
     y los nuevos datos validados por AdditionalForm.
     */
+    // Envía los cambios del adicional y conserva su identificador original.
     async function handleUpdate(formData) {
         try {
             setError("");

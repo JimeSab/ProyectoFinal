@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
 // Listar servicios
+// Obtiene todos los servicios para el listado general.
 export async function getServices() {
     try {
         const response = await fetch(`${API_URL}/servicios`);
@@ -12,6 +13,7 @@ export async function getServices() {
     }
 }
 // Obtener servicio por ID
+// Obtiene el detalle de un servicio específico.
 export async function getServiceById(id) {
     try {
         const response = await fetch(`${API_URL}/servicios/${id}`);
@@ -24,6 +26,7 @@ export async function getServiceById(id) {
     }
 }
 
+// Envía la imagen al API y devuelve el nombre con que será almacenada.
 export async function uploadServiceImage(
     file,
     previousFileName = null
@@ -59,6 +62,7 @@ export async function uploadServiceImage(
     }
 
 // Crear un servicio
+// Crea un servicio utilizando los datos preparados por el formulario.
 export async function createService(serviceData) {
         try {
             const response = await fetch(`${API_URL}/servicios`, {
@@ -107,6 +111,7 @@ export async function createService(serviceData) {
         }
     }
 
+// Cambia únicamente el estado activo del servicio.
 export async function updateServiceStatus(id, activo) {
     try {
         const response = await fetch(
@@ -157,6 +162,7 @@ export async function updateServiceStatus(id, activo) {
 Usa GET para obtener SOLO los servicios activos
 que pueden seleccionarse al crear una cita.
 */
+// Obtiene solo los servicios que pueden utilizarse al crear una cita.
 export async function getActiveServices() {
     try {
         const response = await fetch(

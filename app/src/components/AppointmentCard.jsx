@@ -31,6 +31,22 @@ export function AppointmentCard({ appointment }) {
     const { user } = useAuth();
     const role = user?.rol?.nombre;
 
+    /* Color para cada estado de la cita */
+    function getStatusClass(status) {
+        const statusClasses = {
+            Pendiente: "border-yellow-200 bg-yellow-50 text-yellow-700",
+            Confirmada: "border-blue-200 bg-blue-50 text-blue-700",
+            "En proceso": "border-orange-200 bg-orange-50 text-orange-700",
+            Finalizada: "border-green-200 bg-green-50 text-green-700",
+            Cancelada: "border-red-200 bg-red-50 text-red-700",
+        };
+
+        return (
+            statusClasses[status] ||
+            "border-gray-200 bg-gray-100 text-gray-600"
+        );
+    }
+
     return (
         <Card className="h-full">
 
@@ -41,7 +57,12 @@ export function AppointmentCard({ appointment }) {
                     {appointment.servicio.nombre}
                 </CardTitle>
 
-                <Badge variant="outline">
+                <Badge
+                    variant="outline"
+                    className={getStatusClass(
+                        appointment.estadoCita.nombre
+                    )}
+                >
                     {appointment.estadoCita.nombre}
                 </Badge>
             </CardHeader>
@@ -64,13 +85,13 @@ export function AppointmentCard({ appointment }) {
                 <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     <span>
-                    {formatAppointmentTime(
-            appointment.horaInicio
-        )}{" "}
-        -{" "}
-        {formatAppointmentTime(
-            appointment.horaFin
-        )}
+                        {formatAppointmentTime(
+                            appointment.horaInicio
+                        )}{" "}
+                        -{" "}
+                        {formatAppointmentTime(
+                            appointment.horaFin
+                        )}
                     </span>
                 </div>
 
@@ -100,33 +121,33 @@ export function AppointmentCard({ appointment }) {
 
                 <Button
                     asChild
-                    variant="outline"
-                    className="flex-1"
+                    variant="ghost"
+                    className="flex-1 w-full group/btn bg-[#F9DFDF] text-black hover:bg-[#F9DFDF] hover:text-black transition-all duration-300"
                 >
                     <Link to={`/citas/${appointment.id}`}>
                         Detalle
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                     </Link>
                 </Button>
 
 
                 {/* Administradores y empleados pueden editar. */}
                 {(role === "Administrador" ||
-    role === "Empleado") &&
-    appointment.estadoCita.permiteEdicion && (
-                    <Button
-                        asChild
-                        variant="outline"
-                        className="flex-1"
-                    >
-                        <Link
-                            to={`/citas/${appointment.id}/editar`}
+                    role === "Empleado") &&
+                    appointment.estadoCita.permiteEdicion && (
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex-1"
                         >
-                            Editar
-                            <Pencil className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                )}
+                            <Link
+                                to={`/citas/${appointment.id}/editar`}
+                            >
+                                Editar
+                                <Pencil className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    )}
             </CardFooter>
         </Card>
     );
@@ -149,9 +170,9 @@ AppointmentCard.propTypes = {
         servicio: PropTypes.shape({
             nombre: PropTypes.string.isRequired,
         }).isRequired,
-       estadoCita: PropTypes.shape({
-    nombre: PropTypes.string.isRequired,
-    permiteEdicion: PropTypes.bool.isRequired,
-}).isRequired,
+        estadoCita: PropTypes.shape({
+            nombre: PropTypes.string.isRequired,
+            permiteEdicion: PropTypes.bool.isRequired,
+        }).isRequired,
     }).isRequired,
 };

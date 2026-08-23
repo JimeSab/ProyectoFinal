@@ -13,6 +13,7 @@ import {
 
 import { getScheduleById } from "@/services/schedulesService";
 
+// Convierte la hora recibida del API a un formato corto para el usuario.
 function formatTime(value) {
     if (!value) {
         return "No disponible";
@@ -28,6 +29,7 @@ export function ScheduleDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Carga el detalle del horario seleccionado desde el identificador de la ruta.
     useEffect(() => {
         async function loadSchedule() {
             try {
