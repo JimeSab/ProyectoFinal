@@ -181,7 +181,7 @@ export default function App() {
                         path="/empleados"
                         element={
                             <ProtectedRoute>
-                                <RoleRoute allowedRoles={["Administrador"]}>
+                                <RoleRoute allowedRoles={["Administrador", "Empleado"]}>
                                     <EmployeesPage />
                                 </RoleRoute>
                             </ProtectedRoute>

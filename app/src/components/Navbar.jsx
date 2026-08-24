@@ -73,7 +73,7 @@ export function Navbar() {
                         </NavLink>
                     )}
 
-                    {isAuthenticated && isAdmin && (
+                    {isAuthenticated && (isAdmin || isEmployee) && (
                         <NavLink to="/empleados" className={linkClass}>
                             Empleados
                         </NavLink>

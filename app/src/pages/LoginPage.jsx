@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { LogIn, Mail, LockKeyhole } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input"
 
 export function LoginPage() {
     const navigate = useNavigate()
-    const location = useLocation()
     const { login, isAuthenticated } = useAuth()
 
     // Configura el formulario y conecta sus campos con el schema de Zod.
@@ -46,9 +45,8 @@ export function LoginPage() {
 
             toast.success(`Bienvenido, ${user.nombre || user.correo}.`);
 
-            // Devuelve al usuario a la página que intentó visitar antes de iniciar sesión.
-            const previousRoute = location.state?.from?.pathname;
-            navigate(previousRoute || "/", { replace: true });
+            // Coloca al usuario en la pantalla de inicio luego de iniciar sesion
+            navigate("/", { replace: true });
         // Informa mediante toast si el API rechaza las credenciales.
         } catch (error) {
             toast.error(error.message);

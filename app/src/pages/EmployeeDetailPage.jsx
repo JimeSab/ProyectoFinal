@@ -42,9 +42,7 @@ export function EmployeeDetailPage() {
     const isAdmin = user?.rol?.nombre === "Administrador";
     const isEmployee = user?.rol?.nombre === "Empleado";
     // Un administrador puede consultar cualquier empleado; un empleado solo el suyo.
-    const canViewEmployee = isAdmin || (
-        isEmployee && String(user?.empleado?.id) === String(id)
-    );
+    const canViewEmployee = isAdmin || isEmployee;
 
     const [employee, setEmployee] = useState(null);
     const [agenda, setAgenda] = useState(null);
@@ -55,9 +53,7 @@ export function EmployeeDetailPage() {
     const [loadingAgenda, setLoadingAgenda] = useState(false);
     const [error, setError] = useState("");
     const [agendaError, setAgendaError] = useState("");
-    const backPath = isAdmin
-    ? "/empleados"
-    : "/";
+    const backPath = "/empleados";
 
     // Carga la información general del empleado seleccionado.
     useEffect(() => {

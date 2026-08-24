@@ -110,7 +110,7 @@ export function ServiceDetailPage() {
                         <strong>Especialidad:</strong>{" "}
                         {service.especialidad?.nombre || "No disponible"}
                     </p>
-
+                    
                     <p>
                         <strong>Estado:</strong>{" "}
                         {service.activo ? "Activo" : "Inactivo"}
