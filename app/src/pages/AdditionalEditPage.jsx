@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AdditionalForm } from "@/components/AdditionalForm";
+
 import { PageHeader } from "@/components/PageHeader";
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import {
@@ -11,63 +14,38 @@ import {
 } from "@/services/additionalsService";
 
 export function AdditionalEditPage() {
-    /*
-    Obtiene el ID de la dirección usando useParams para identificar
-    cuál servicio adicional debe consultarse y actualizarse.
-    */
+    /* Obtiene el ID desde la dirección. */
     const { id } = useParams();
 
-    /*
-    Utiliza useNavigate para regresar al listado después
-    de actualizar correctamente el servicio adicional.
-    */
+    /* Permite regresar al listado. */
     const navigate = useNavigate();
 
-    /*
-    Guarda los datos recibidos del API usando useState
-    para cargarlos dentro del formulario de edición.
-    */
+    /* Guarda los datos del adicional. */
     const [additional, setAdditional] = useState(null);
 
-    /*
-    Controla la carga usando useState para mostrar un mensaje
-    mientras se consulta la información del adicional.
-    */
+    /* Controla el estado de carga. */
     const [loading, setLoading] = useState(true);
 
-    /*
-    Guarda los errores usando useState para mostrarlos
-    si falla la consulta o la actualización.
-    */
+    /* Guarda los errores del API. */
     const [error, setError] = useState("");
 
-    /*
-    Consulta el adicional usando useEffect cuando se abre la página
-    o cuando cambia el ID recibido desde la dirección.
-    */
-    // Carga el adicional seleccionado para mostrar sus datos actuales en el formulario.
+    /* Carga el adicional cuando cambia el ID. */
     useEffect(() => {
         async function loadAdditional() {
             try {
                 setLoading(true);
                 setError("");
 
-                /*
-                Obtiene el registro usando getAdditionalById
-                para cargar sus datos actuales en el formulario.
-                */
+                /* Consulta el adicional seleccionado. */
                 const response = await getAdditionalById(id);
 
-                // Guarda la información recibida para mostrarla en el formulario.
+                /* Guarda los datos para el formulario. */
                 setAdditional(response.data);
             } catch (requestError) {
-                /*
-                Guarda el mensaje recibido del API usando setError
-                para mostrarlo claramente en la interfaz.
-                */
+                /* Guarda el error recibido. */
                 setError(requestError.message);
             } finally {
-                // Finaliza el estado de carga aunque la solicitud falle.
+                /* Finaliza la carga. */
                 setLoading(false);
             }
         }
@@ -75,40 +53,27 @@ export function AdditionalEditPage() {
         loadAdditional();
     }, [id]);
 
-    /*
-    Actualiza el adicional usando updateAdditional, el ID recibido
-    y los nuevos datos validados por AdditionalForm.
-    */
-    // Envía los cambios del adicional y conserva su identificador original.
+    /* Envía los cambios del adicional. */
     async function handleUpdate(formData) {
         try {
             setError("");
 
-            /*
-            Envía nombre, descripción y precio usando PUT
-            para actualizar todos los campos editables del adicional.
-            */
+            /* Actualiza el adicional en el API. */
             const response = await updateAdditional(id, formData);
 
-            /*
-            Regresa al listado usando navigate y envía el mensaje
-            de éxito recibido desde el API.
-            */
+            /* Regresa al listado con el mensaje de éxito. */
             navigate("/adicionales", {
                 state: {
                     success: response.message,
                 },
             });
         } catch (requestError) {
-            /*
-            Guarda el error usando setError para mantener
-            el formulario visible y explicar qué ocurrió.
-            */
+            /* Muestra el error de actualización. */
             setError(requestError.message);
         }
     }
 
-    // Muestra un mensaje mientras se consultan los datos.
+    /* Muestra un mensaje mientras carga. */
     if (loading) {
         return (
             <p className="text-center text-muted-foreground">
@@ -117,10 +82,7 @@ export function AdditionalEditPage() {
         );
     }
 
-    /*
-    Muestra una alerta cuando no fue posible encontrar
-    o cargar el servicio adicional solicitado.
-    */
+    /* Muestra un error si no existe el adicional. */
     if (!additional) {
         return (
             <Alert variant="destructive">
@@ -133,23 +95,20 @@ export function AdditionalEditPage() {
 
     return (
         <section className="space-y-6">
-            {/* Utiliza PageHeader para mantener el encabezado del proyecto. */}
+            {/* Muestra el encabezado. */}
             <PageHeader
                 title="Editar servicio adicional"
                 description={`Modifique la información de ${additional.nombre}`}
             />
 
-            {/* Muestra el error cuando el API rechaza la actualización. */}
+            {/* Muestra el error del API. */}
             {error && (
                 <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
             )}
 
-            {/*
-            Reutiliza AdditionalForm y envía initialData para mostrar
-            los valores actuales del adicional dentro de los campos.
-            */}
+            {/* Muestra el formulario con los datos actuales. */}
             <AdditionalForm
                 initialData={additional}
                 onSubmit={handleUpdate}

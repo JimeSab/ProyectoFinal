@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
+
 import { Link, useParams } from "react-router-dom";
+
 import { useAuth } from "@/auth/useAuth";
 
 import { PageHeader } from "@/components/PageHeader";
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
+
 import {
     Card,
     CardContent,
@@ -16,67 +22,40 @@ import {
 import { getAdditionalById } from "@/services/additionalsService";
 
 export function AdditionalDetailPage() {
-    /*
-    Obtiene el ID desde la dirección usando useParams
-    para consultar el servicio adicional seleccionado.
-    */
+    /* Obtiene el ID del adicional desde la URL. */
     const { id } = useParams();
 
-    /*
-    Guarda el adicional usando useState para poder mostrar
-    la información recibida desde el API.
-    */
+    /* Guarda la información del adicional. */
     const [additional, setAdditional] = useState(null);
 
-    /*
-    Controla la carga usando useState para mostrar un mensaje
-    mientras se realiza la solicitud al API.
-    */
+    /* Indica si los datos todavía están cargando. */
     const [loading, setLoading] = useState(true);
 
-    /*
-    Guarda el mensaje de error usando useState para mostrarlo
-    si el adicional no existe o falla la conexión.
-    */
+    /* Guarda los errores recibidos del API. */
     const [error, setError] = useState("");
 
     const { isAuthenticated, user } = useAuth();
+
     const isAdmin = user?.rol?.nombre === "Administrador";
 
-    /*
-    Consulta el adicional usando useEffect cuando se abre la página
-    o cuando cambia el ID de la dirección.
-    */
-    // Consulta el adicional indicado en la URL para mostrar su información completa.
+    /* Consulta el adicional cuando cambia el ID. */
     useEffect(() => {
         async function loadAdditional() {
             try {
-                // Activa la carga y elimina errores anteriores.
+                /* Inicia la carga y limpia errores anteriores. */
                 setLoading(true);
                 setError("");
 
-                /*
-                Obtiene el detalle usando getAdditionalById,
-                que realiza una solicitud GET con el ID seleccionado.
-                */
+                /* Obtiene el adicional seleccionado desde el API. */
                 const response = await getAdditionalById(id);
 
-                /*
-                Guarda response.data usando setAdditional
-                para mostrar la información en la tarjeta.
-                */
+                /* Guarda los datos recibidos. */
                 setAdditional(response.data);
             } catch (requestError) {
-                /*
-                Guarda el mensaje recibido usando setError
-                para mostrarlo claramente en la interfaz.
-                */
+                /* Guarda el error para mostrarlo en pantalla. */
                 setError(requestError.message);
             } finally {
-                /*
-                Desactiva la carga después de completar la solicitud,
-                aunque haya ocurrido un error.
-                */
+                /* Finaliza la carga. */
                 setLoading(false);
             }
         }
@@ -84,10 +63,7 @@ export function AdditionalDetailPage() {
         loadAdditional();
     }, [id]);
 
-    /*
-    Muestra un mensaje mientras loading sea true
-    para indicar que los datos todavía se están consultando.
-    */
+    /* Muestra un mensaje mientras carga la información. */
     if (loading) {
         return (
             <p className="text-center text-muted-foreground">
@@ -96,10 +72,7 @@ export function AdditionalDetailPage() {
         );
     }
 
-    /*
-    Muestra el error y un botón para regresar cuando el API
-    no devuelve información del adicional solicitado.
-    */
+    /* Muestra un error si no se encontró el adicional. */
     if (error || !additional) {
         return (
             <section className="space-y-4">
@@ -120,36 +93,27 @@ export function AdditionalDetailPage() {
 
     return (
         <section className="space-y-6">
-            {/*
-            Utiliza Link para regresar al listado sin recargar
-            completamente la aplicación.
-            */}
+            {/* Regresa al listado de adicionales. */}
             <Button asChild variant="outline">
                 <Link to="/adicionales">
                     Volver
                 </Link>
             </Button>
 
-            {/* Utiliza PageHeader para mantener el encabezado del proyecto. */}
+            {/* Muestra el encabezado de la página. */}
             <PageHeader
                 title={additional.nombre}
                 description="Información detallada del servicio adicional"
             />
 
-            {/*
-            Organiza los datos usando Card de shadcn
-            para mantener un diseño consistente y reutilizable.
-            */}
+            {/* Muestra la información dentro de una tarjeta. */}
             <Card className="mx-auto max-w-3xl">
                 <CardHeader className="grid grid-cols-[1fr_auto] items-start gap-3">
                     <CardTitle className="text-2xl">
                         {additional.nombre}
                     </CardTitle>
 
-                    {/*
-                    Utiliza Badge y una condición para mostrar
-                    visualmente si el adicional está activo o inactivo.
-                    */}
+                    {/* Muestra si está activo o inactivo. */}
                     <Badge
                         variant="outline"
                         className={
@@ -163,7 +127,7 @@ export function AdditionalDetailPage() {
                 </CardHeader>
 
                 <CardContent className="grid gap-5">
-                    {/* Muestra la descripción recibida desde el API. */}
+                    {/* Muestra la descripción del adicional. */}
                     <div>
                         <p className="mb-1 text-sm font-medium">
                             Descripción
@@ -174,10 +138,7 @@ export function AdditionalDetailPage() {
                         </p>
                     </div>
 
-                    {/*
-                    Convierte el precio usando Number y toLocaleString
-                    para presentarlo con el formato numérico de Costa Rica.
-                    */}
+                    {/* Muestra el precio con formato de Costa Rica. */}
                     <div>
                         <p className="mb-1 text-sm font-medium">
                             Precio adicional
@@ -191,10 +152,7 @@ export function AdditionalDetailPage() {
                         </p>
                     </div>
 
-                    {/*
-                    Utiliza el ID dentro de Link para abrir la página
-                    de edición correspondiente al adicional seleccionado.
-                    */}
+                    {/* Permite editar si el usuario es administrador. */}
                     {isAuthenticated && isAdmin && (
                         <Button
                             asChild
