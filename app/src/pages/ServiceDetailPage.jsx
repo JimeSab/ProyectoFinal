@@ -107,7 +107,8 @@ export function ServiceDetailPage() {
                     </p>
 
                     <p>
-                        <strong>Especialidad ID:</strong> {service.especialidadId}
+                        <strong>Especialidad:</strong>{" "}
+                        {service.especialidad?.nombre || "No disponible"}
                     </p>
 
                     <p>

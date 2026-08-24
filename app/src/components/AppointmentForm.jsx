@@ -73,7 +73,7 @@ export function AppointmentForm({
 
     const serviceId = watch("servicioId");
     const employeeId = watch("empleadoId");
-const appointmentDate = watch("fecha");
+    const appointmentDate = watch("fecha");
     const startTime = watch("horaInicio");
     const additionalIds =
         watch("adicionalIds") || [];
@@ -135,7 +135,7 @@ const appointmentDate = watch("fecha");
         const dataToSend = {
             ...formData,
             observaciones:
-    formData.observaciones.trim() || null,
+                formData.observaciones.trim() || null,
             clienteId: Number(formData.clienteId),
             servicioId: Number(formData.servicioId),
             empleadoId: Number(formData.empleadoId),
@@ -146,7 +146,7 @@ const appointmentDate = watch("fecha");
             costoTotal: totalCost,
             adicionalIds:
                 formData.adicionalIds.map(Number),
-                
+
         };
 
         await onSubmit(dataToSend);
@@ -205,7 +205,7 @@ const appointmentDate = watch("fecha");
                         </div>
 
                         {/* Selecciona el servicio principal. */}
-                        
+
                         <div>
                             <label
                                 htmlFor="servicioId"
@@ -367,13 +367,13 @@ const appointmentDate = watch("fecha");
                             />
                         </div>
 
-{/* Muestra la agenda del empleado seleccionado. */}
-<div className="md:col-span-2">
-    <AppointmentAgenda
-        employeeId={employeeId}
-        date={appointmentDate}
-    />
-</div>
+                        {/* Muestra la agenda del empleado seleccionado. */}
+                        <div className="md:col-span-2">
+                            <AppointmentAgenda
+                                employeeId={employeeId}
+                                date={appointmentDate}
+                            />
+                        </div>
                         {/* Selecciona los adicionales. */}
 
                         <div className="md:col-span-2">
