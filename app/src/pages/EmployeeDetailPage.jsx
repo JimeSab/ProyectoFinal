@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { getEmployeeById, getEmployeeAgenda } from "@/services/employeesService";
+import { getRestrictions } from "@/services/restrictionsService";
 import { useAuth } from "@/auth/useAuth";
 
 // Convierte la fecha recibida por el API a un formato legible para la pantalla.
@@ -15,9 +16,20 @@ function formatDate(date) {
         return "No disponible";
     }
 
+    const dateText = String(date).slice(0, 10);
+    const [year, month, day] = dateText
+        .split("-")
+        .map(Number);
+
+    const localDate = new Date(
+        year,
+        month - 1,
+        day
+    );
+
     return new Intl.DateTimeFormat("es-CR", {
         dateStyle: "long",
-    }).format(new Date(date));
+    }).format(localDate);
 }
 
 // Extrae únicamente la hora y los minutos de valores DateTime o Time.
@@ -26,7 +38,23 @@ function formatTime(value) {
         return "No disponible";
     }
 
-    const date = new Date(value);
+    const text = String(value);
+
+    // Si el API devuelve una fecha con hora.
+    if (text.includes("T")) {
+        return text.slice(11, 16);
+    }
+
+    // Si el API devuelve una hora como 09:00:00.
+    if (/^\d{2}:\d{2}/.test(text)) {
+        return text.slice(0, 5);
+    }
+
+    const date = new Date(text);
+
+    if (Number.isNaN(date.getTime())) {
+        return "No disponible";
+    }
 
     return new Intl.DateTimeFormat("es-CR", {
         hour: "2-digit",
@@ -36,15 +64,22 @@ function formatTime(value) {
     }).format(date);
 }
 
+// Extrae la fecha sin hora para comparar fechas del API y del formulario.
+function normalizeDate(date) {
+    return String(date).slice(0, 10);
+}
+
 export function EmployeeDetailPage() {
     const { id } = useParams();
     const { isAuthenticated, user } = useAuth();
     const isAdmin = user?.rol?.nombre === "Administrador";
     const isEmployee = user?.rol?.nombre === "Empleado";
-    // Un administrador puede consultar cualquier empleado; un empleado solo el suyo.
+    // Administradores y empleados pueden consultar el detalle del empleado.
     const canViewEmployee = isAdmin || isEmployee;
 
+    // Guarda la información del empleado, la agenda y los estados de carga.
     const [employee, setEmployee] = useState(null);
+    const [generalRestrictions, setGeneralRestrictions] = useState([]);
     const [agenda, setAgenda] = useState(null);
     const [agendaDate, setAgendaDate] = useState(
         new Date().toISOString().slice(0, 10)
@@ -55,14 +90,42 @@ export function EmployeeDetailPage() {
     const [agendaError, setAgendaError] = useState("");
     const backPath = "/empleados";
 
-    // Carga la información general del empleado seleccionado.
+    // Une las restricciones individuales y generales para filtrarlas por fecha.
+    const allRestrictions = [
+        ...(employee?.restricciones || []),
+        ...generalRestrictions,
+    ];
+
+    // Muestra únicamente las restricciones que aplican a la fecha seleccionada.
+    const selectedDateRestrictions =
+        allRestrictions.filter(
+            (restriction) =>
+                normalizeDate(restriction.fecha) === agendaDate
+        );
+
+    // Carga el empleado y las restricciones generales desde el API.
     useEffect(() => {
         async function loadEmployee() {
             try {
                 setLoading(true);
                 setError("");
-                const response = await getEmployeeById(id);
-                setEmployee(response.data);
+                const [employeeResponse, restrictionsResponse] =
+                    await Promise.all([
+                        getEmployeeById(id),
+                        getRestrictions(),
+                    ]);
+
+                setEmployee(employeeResponse.data);
+
+                const restrictions =
+                    restrictionsResponse.data || restrictionsResponse;
+
+                // Conserva las restricciones sin empleado asignado porque afectan a todo el establecimiento.
+                setGeneralRestrictions(
+                    restrictions.filter(
+                        (restriction) => !restriction.empleadoId
+                    )
+                );
             } catch (requestError) {
                 setError(requestError.message);
             } finally {
@@ -73,7 +136,7 @@ export function EmployeeDetailPage() {
         loadEmployee();
     }, [id]);
 
-    // Consulta la agenda y las restricciones cuando cambia la fecha seleccionada.
+    // Consulta la agenda y las restricciones aplicables cuando cambia la fecha.
     useEffect(() => {
         async function loadAgenda() {
             try {
@@ -165,29 +228,73 @@ export function EmployeeDetailPage() {
                 </CardContent>
             </Card>
 
+            {/* Muestra las restricciones generales e individuales de la fecha seleccionada. */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Restricciones registradas</CardTitle>
+                    <CardTitle>
+                        Restricciones para la fecha seleccionada
+                    </CardTitle>
                 </CardHeader>
 
                 <CardContent>
-                    {employee.restricciones?.length > 0 ? (
+                    {selectedDateRestrictions.length > 0 ? (
                         <div className="space-y-4">
-                            {employee.restricciones.map((restriction) => (
-                                <div key={restriction.id} className="rounded-lg border p-4">
-                                    <p><strong>Fecha:</strong> {formatDate(restriction.fecha)}</p>
-                                    <p><strong>Hora inicio:</strong> {formatTime(restriction.horaInicio)}</p>
-                                    <p><strong>Hora fin:</strong> {formatTime(restriction.horaFin)}</p>
-                                    <p><strong>Tipo:</strong> {restriction.tipoRestriccion?.nombre || "No disponible"}</p>
-                                    <p><strong>Estado:</strong> {restriction.activo ? "Activa" : "Inactiva"}</p>
-                                    {restriction.descripcion && (
-                                        <p><strong>Descripción:</strong> {restriction.descripcion}</p>
-                                    )}
+                            {selectedDateRestrictions.map((restriction) => (
+                                <div
+                                    key={restriction.id}
+                                    className="rounded-lg border p-4"
+                                >
+                                    <p>
+                                        <strong>Aplicación:</strong>{" "}
+                                        {restriction.empleadoId
+                                            ? "Empleado específico"
+                                            : "Todo el establecimiento"}
+                                    </p>
+
+                                    <p>
+                                        <strong>Fecha:</strong>{" "}
+                                        {formatDate(restriction.fecha)}
+                                    </p>
+
+                                    <p>
+                                        <strong>Horario:</strong>{" "}
+                                        {restriction.todoElDia
+                                            ? "Todo el día"
+                                            : `${formatTime(
+                                                restriction.horaInicio
+                                            )} - ${formatTime(
+                                                restriction.horaFin
+                                            )}`}
+                                    </p>
+
+                                    <p>
+                                        <strong>Tipo:</strong>{" "}
+                                        {restriction.tipoRestriccion?.nombre ||
+                                            (restriction.empleadoId
+                                                ? "Específica de empleado"
+                                                : "General del establecimiento")}
+                                    </p>
+
+                                    <p>
+                                        <strong>Motivo:</strong>{" "}
+                                        {restriction.motivo ||
+                                            restriction.descripcion ||
+                                            "No disponible"}
+                                    </p>
+
+                                    <p>
+                                        <strong>Estado:</strong>{" "}
+                                        {restriction.activo
+                                            ? "Activa"
+                                            : "Inactiva"}
+                                    </p>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-muted-foreground">No tiene restricciones registradas.</p>
+                        <p className="text-muted-foreground">
+                            No hay restricciones para la fecha seleccionada.
+                        </p>
                     )}
                 </CardContent>
             </Card>
@@ -198,6 +305,7 @@ export function EmployeeDetailPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
+                    {/* Permite cambiar la fecha para consultar otra agenda. */}
                     <div className="max-w-xs">
                         <label htmlFor="agendaDate" className="mb-2 block text-sm font-medium">
                             Consultar por fecha
@@ -229,6 +337,7 @@ export function EmployeeDetailPage() {
                             <div>
                                 <h3 className="mb-3 text-lg font-semibold">Citas del día</h3>
 
+                                {/* Muestra las citas asignadas al empleado para la fecha seleccionada. */}
                                 {agenda.citas?.length > 0 ? (
                                     <div className="space-y-4">
                                         {agenda.citas.map((appointment) => (
