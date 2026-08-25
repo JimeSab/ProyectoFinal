@@ -172,11 +172,19 @@ export function RegisterPage() {
                                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="telefono"
-                                    type="text"
-                                    placeholder="8888-8888"
+                                    type="tel"
+                                    inputMode="numeric"
+                                    maxLength={8}
+                                    placeholder="88888888"
                                     className="pl-9"
                                     disabled={isSubmitting}
-                                    {...register("telefono")}
+                                    {...register("telefono", {
+                                        onChange: (event) => {
+                                            event.target.value = event.target.value
+                                                .replace(/[^0-9]/g, "")
+                                                .slice(0, 8);
+                                        },
+                                    })}
                                 />
                                 {errors.telefono && (
                                     <p className="mt-1 text-sm text-red-600">

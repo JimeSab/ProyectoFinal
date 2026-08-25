@@ -48,68 +48,76 @@ export async function uploadServiceImage(
         });
 
         if (!response.ok) {
-                const data = await response.json();
-                console.error("========== ERROR AL SUBIR IMAGEN ==========");
-                console.error(data);
-                console.error("===========================================");
-                throw new Error();
-            }
             const data = await response.json();
-            return data.fileName;
-        } catch {
-            throw new Error("No se pudo subir la imagen");
+            console.error("========== ERROR AL SUBIR IMAGEN ==========");
+            console.error(data);
+            console.error("===========================================");
+            throw new Error();
         }
+        const data = await response.json();
+        return data.fileName;
+    } catch {
+        throw new Error("No se pudo subir la imagen");
     }
+}
 
 // Crear un servicio
 // Crea un servicio utilizando los datos preparados por el formulario.
 export async function createService(serviceData) {
-        try {
-            const response = await fetch(`${API_URL}/servicios`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(serviceData),
-            });
+    try {
+        const response = await fetch(`${API_URL}/servicios`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(serviceData),
+        });
 
-            if (!response.ok) {
-                const data = await response.json();
-                console.error("========== ERROR API ==========");
-                console.error(data);
-                console.error("===============================");
-                throw new Error(JSON.stringify(data, null, 2));
-            }
-
-            return await response.json();
-        } catch {
-            throw new Error("No se pudo crear el servicio");
+        if (!response.ok) {
+            const data = await response.json();
+            console.error("========== ERROR API ==========");
+            console.error(data);
+            console.error("===============================");
+            throw new Error(
+                data.message || "No se pudo guardar el servicio."
+            );
         }
+
+        return await response.json();
+    } catch (error) {
+        throw new Error(
+            error.message || "No se pudo crear el servicio"
+        );
     }
-    // Actualizar un servicio
-    export async function updateService(id, serviceData) {
-        try {
-            const response = await fetch(`${API_URL}/servicios/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(serviceData),
-            });
+}
+// Actualizar un servicio
+export async function updateService(id, serviceData) {
+    try {
+        const response = await fetch(`${API_URL}/servicios/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(serviceData),
+        });
 
-            if (!response.ok) {
-                const data = await response.json();
-                console.error("========== ERROR API UPDATE ==========");
-                console.error(data);
-                console.error("======================================");
-                throw new Error(JSON.stringify(data, null, 2));
-            }
-
-            return await response.json();
-        } catch {
-            throw new Error("No se pudo actualizar el servicio.");
+        if (!response.ok) {
+            const data = await response.json();
+            console.error("========== ERROR API UPDATE ==========");
+            console.error(data);
+            console.error("======================================");
+            throw new Error(
+                data.message || "No se pudo guardar el servicio."
+            );
         }
+
+        return await response.json();
+    } catch (error) {
+        throw new Error(
+            error.message || "No se pudo actualizar el servicio."
+        );
     }
+}
 
 // Cambia únicamente el estado activo del servicio.
 export async function updateServiceStatus(id, activo) {

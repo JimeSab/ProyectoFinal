@@ -42,12 +42,16 @@ export async function createEmployee(employeeData) {
             console.error("========== ERROR API ==========");
             console.error(data);
             console.error("===============================");
-            throw new Error(JSON.stringify(data, null, 2));
+            throw new Error(
+                data.message || "No se pudo guardar el empleado."
+            );
         }
 
         return await response.json();
-    } catch {
-        throw new Error("No se pudo crear el empleado");
+    } catch (error) {
+        throw new Error(
+            error.message || "No se pudo crear el empleado"
+        );
     }
 }
 
@@ -67,12 +71,16 @@ export async function updateEmployee(id, employeeData) {
             console.error("========== ERROR API UPDATE ==========");
             console.error(data);
             console.error("======================================");
-            throw new Error(JSON.stringify(data, null, 2));
+            throw new Error(
+                data.message || "No se pudo guardar el empleado."
+            );
         }
 
         return await response.json();
-    } catch {
-        throw new Error("No se pudo actualizar el empleado.");
+    } catch (error) {
+        throw new Error(
+            error.message || "No se pudo actualizar el empleado."
+        );
     }
 }
 
